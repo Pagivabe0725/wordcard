@@ -1,0 +1,42 @@
+@import "../Styles/basic-flex-setup.scss";
+
+mat-card {
+  width: 50vw;
+  padding: 5vh;
+  //height: 60vh;
+  @include bfs(column, relative);
+  justify-content: flex-end;
+  gap:1vh
+}
+
+mat-label {
+  font-size: 1vw;
+}
+
+mat-form-field {
+  width: 100%;
+  font-size: 2vw;
+}
+
+button {
+  width: 30%;
+  font-size: 1.5vw;
+  height: 3vw;
+}
+
+h1 {
+  font-size: 2vw;
+  position: relative;
+}
+
+.own-login-component-row-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.own-login-component-row-div mat-form-field {
+  width: 45%;
+}

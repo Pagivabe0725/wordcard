@@ -1,0 +1,52 @@
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner color="accent"></mat-spinner>
+</span>
+}
+
+<mat-card [formGroup]="sign_upForm">
+  <div class="own-login-component-row-div">
+    <mat-form-field>
+      <mat-label>Vezetéknév:</mat-label>
+      <input matInput type="text" formControlName="firstName" />
+      @if (sign_upForm.get('firstName')?.hasError('required')) {
+      <mat-error>Kötelező kitölteni</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Keresztnév:</mat-label>
+      <input matInput type="text" formControlName="lastName" />
+      @if (sign_upForm.get('lastName')?.hasError('required')) {
+      <mat-error>Kötelező kitölteni</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <mat-form-field>
+    <mat-label>Email:</mat-label>
+    <input matInput type="email" formControlName="email" />
+    @if (sign_upForm.get('email')?.hasError('required')) {
+    <mat-error>Kötelező kitölteni</mat-error>
+    }@else if (sign_upForm.get('email')?.hasError('email')) {
+    <mat-error>Nem jó formátum</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Jelszó:</mat-label>
+    <input matInput type="password" formControlName="password" />
+    @if (sign_upForm.get('password')?.hasError('required')) {
+    <mat-error>Kötelező kitölteni</mat-error>
+    }@else if (sign_upForm.get('password')?.hasError('minlength')) {
+    <mat-error>Túl rövid(6)</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Jelszó megerősítés:</mat-label>
+    <input matInput type="password" formControlName="rePassword" />
+    @if (sign_upForm.get('rePassword')?.hasError('required')) {
+    <mat-error>Kötelező kitölteni</mat-error>
+    }@else if (sign_upForm.get('rePassword')?.hasError('minlength')) {
+    <mat-error>Túl rövid(6)</mat-error>
+    }
+  </mat-form-field>
+  <button mat-flat-button (click)="registration()">Regisztráció</button>
+</mat-card>

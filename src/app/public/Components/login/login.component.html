@@ -1,0 +1,26 @@
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner></mat-spinner>
+</span>
+}
+<mat-card [formGroup]="loginForm">
+  <mat-form-field>
+    <mat-label>Email:</mat-label>
+    <input matInput type="email" formControlName="email"/>
+    @if (loginForm.get('email')?.hasError('required')) {
+    <mat-error>Kötelező kitölteni</mat-error>
+    }@else if (loginForm.get('email')?.hasError('email')) {
+    <mat-error>Nem jó formátum</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Jelszó:</mat-label>
+    <input matInput type="password" formControlName="password" />
+    @if (loginForm.get('password')?.hasError('required')) {
+    <mat-error>Kötelező kitölteni</mat-error>
+    }@else if (loginForm.get('password')?.hasError('minlength')) {
+    <mat-error>Túl rövid(6)</mat-error>
+    }
+  </mat-form-field>
+  <button mat-flat-button (click)="login()">Bejelentkezés</button>
+</mat-card>

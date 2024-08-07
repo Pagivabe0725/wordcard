@@ -1,0 +1,33 @@
+<div id="own-left_side-component-div">
+  <div id="own-left_side-component-title-div">
+    <h1>Üdvözöllek!</h1>
+  </div>
+  <div id="own-left_side-component-content-div">
+    @if (actualPage==='login') {
+    <p>
+      Ez a weboldal abból a célból jött létre, hogy segítséget nyújtson az angol
+      nyelv (rendhagyó igék és szavak) gyakorlására
+    </p>
+    <p>
+      Amennyiben még nem regisztráltál, de szeretnéd használni az oldal
+      szolgáltatásait, az alábbi gomb segítségével megteheted
+    </p>
+    <button color="accent" mat-raised-button routerLink="sign-up">
+      Regisztráció
+    </button>
+    }@else{
+    <p>
+      A jobb oldalon látható űrlap segítségével tudsz regisztrálni, amennyiben
+      szeretnéd igénybe venni az oldal szolgáltatásait. Majd ezt követően be is
+      tudsz jelentkezi.
+    </p>
+    <p>
+      Amennyiben már regisztrált felhasználó vagy, az alábbi gomb segítségével
+      vissza léphetsz a bejelentkezéshez
+    </p>
+    <button color="accent" mat-raised-button routerLink="login">
+      Bejelentkezés
+    </button>
+    }
+  </div>
+</div>

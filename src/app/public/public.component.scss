@@ -1,0 +1,9 @@
+@import'../Shared/Styles/basic-flex-setup.scss';
+
+#own-public-component-container-div{
+    margin-left: 30%;
+    width: 70%;
+    height: 100%;
+    @include bfs(column,absolute);
+   
+}

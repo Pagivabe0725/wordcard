@@ -1,4 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+@import "./app/Shared/Styles/colors.scss";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: white;
+  background-color: $background-color;
+}
+
+.own-spinner {
+  z-index: 999;
+  position: fixed;
+  overflow: show;
+  margin: auto;
+  height: 1em;
+  width: 1em;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  
+}
+
+.own-spinner ::before {
+  content: "";
+  position: fixed;
+  display: block;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+}
