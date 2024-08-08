@@ -13,4 +13,8 @@ export class LocalStorageService {
   chosenObjectFromLocalStorage(key: string): Object {
     return JSON.parse(localStorage.getItem(key) as string);
   }
+
+  removeObjectFromLocalStorage(key: string): void {
+    localStorage.removeItem(key);
+  }
 }

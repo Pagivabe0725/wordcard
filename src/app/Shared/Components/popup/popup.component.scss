@@ -1,0 +1,37 @@
+@import "../../Styles/basic-flex-setup.scss";
+@import "../../Styles/colors.scss";
+
+.own-dialog-title-primary {
+  color: $primary-color;
+  font-size: 3vw;
+}
+
+.own-dialog-title-accent {
+  color: $accent-color;
+  font-size: 3vw;
+}
+
+#own-dialog-content {
+  @include bfs(row, relative);
+}
+#own-dialog-action {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 1vw;
+  font-size: 1.2vw;
+}
+
+button {
+  width: 20%;
+  color: black;
+}
+
+.own-dialog-button-primary {
+  background-color: $primary-color;
+}
+
+.own-dialog-button-accent {
+  background-color: $accent-color;
+}

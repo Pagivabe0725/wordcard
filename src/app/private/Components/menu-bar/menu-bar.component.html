@@ -1,0 +1,22 @@
+<mat-toolbar>
+  <div id="own-menu_bar-component-navigation-div">{{ page }}</div>
+  <div id="own-menu_bar-component-menu-div">
+    <button mat-button (click)="navigate('main')">Főmenü</button>
+    <button mat-button [mat-menu-trigger-for]="card">Kártyák</button>
+    <mat-menu #card="matMenu">
+      <button mat-menu-item (click)="navigate('create-card')">Készítés</button>
+      <button mat-menu-item (click)="navigate('learn-card')">Tanulás</button>
+    </mat-menu>
+    <button mat-button (click)="navigate('verb-forms')">Igék</button>
+    <button mat-button [mat-menu-trigger-for]="game">Játék</button>
+    <mat-menu #game="matMenu">
+      <button mat-menu-item (click)="navigate('easy-game')">Könnyű</button>
+      <button mat-menu-item (click)="navigate('mid-game')">Közepes</button>
+      <button mat-menu-item (click)="navigate('hard-game')">Nehéz</button>
+    </mat-menu>
+  </div>
+  <div id="own-menu_bar-component-icon-div">
+    <button mat-icon-button><mat-icon>person</mat-icon></button>
+    <button mat-icon-button (click)="quit()"><mat-icon>arrow_forward</mat-icon></button>
+  </div>
+</mat-toolbar>

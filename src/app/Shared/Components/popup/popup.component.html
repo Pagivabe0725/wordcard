@@ -1,0 +1,50 @@
+<h1
+  mat-dialog-title
+  id="own-dialog-title"
+  [ngClass]="
+    actualDialog?.color === 'primary'
+      ? 'own-dialog-title-primary'
+      : 'own-dialog-title-accent'
+  "
+>
+  {{ actualDialog?.title }}
+</h1>
+<div mat-dialog-content id="own-dialog-content">{{ actualDialog?.text }}</div>
+<div mat-dialog-actions id="own-dialog-action">
+  @if (!actualDialog?.chose) {
+  <button
+    mat-flat-button
+    [ngClass]="
+      actualDialog?.color === 'primary'
+        ? 'own-dialog-button-primary'
+        : 'own-dialog-button-accent'
+    "
+    (click)="close(false)"
+  >
+    Oké
+  </button>
+  }@else {
+  <button
+    mat-flat-button
+    [ngClass]="
+      actualDialog?.color === 'primary'
+        ? 'own-dialog-button-primary'
+        : 'own-dialog-button-accent'
+    "
+    (click)="close(true)"
+  >
+    Igen
+  </button>
+  <button
+    mat-flat-button
+    [ngClass]="
+      actualDialog?.color === 'primary'
+        ? 'own-dialog-button-primary'
+        : 'own-dialog-button-accent'
+    "
+    (click)="close(false)"
+  >
+    Nem
+  </button>
+  }
+</div>

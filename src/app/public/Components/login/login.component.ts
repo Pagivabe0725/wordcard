@@ -14,6 +14,10 @@ import { Subscription } from 'rxjs';
 import { LocalStorageService } from '../../../Shared/Services/local-storage.service';
 import { RouterService } from '../../../Shared/Services/router.service';
 import { User } from '../../../Shared/Interfaces/user';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupComponent } from '../../../Shared/Components/popup/popup.component';
+import { Dialog } from '../../../Shared/Interfaces/dialog';
+import { PopupService } from '../../../Shared/Services/popup.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -41,11 +45,12 @@ export class LoginComponent implements OnDestroy {
   constructor(
     private userService: UserService,
     private localStorageService: LocalStorageService,
-    private routerService: RouterService
+    private routerService: RouterService,
+    private popupService: PopupService
   ) {}
 
   ngOnDestroy(): void {
-    this.userSub?.unsubscribe()
+    this.userSub?.unsubscribe();
   }
 
   login(): void {
@@ -71,6 +76,13 @@ export class LoginComponent implements OnDestroy {
           console.error(err.message);
           this.loading = false;
           this.loginForm.reset();
+          const actualDialog: Dialog = {
+            title: 'hiba',
+            text: 'A bejelentkezés sikertelen',
+            chose: false,
+            color:'primary',
+          };
+          this.popupService.displayPopUp(actualDialog);
         });
     }
   }

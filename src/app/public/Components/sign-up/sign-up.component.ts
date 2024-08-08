@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UserService } from '../../../Shared/Services/user.service';
 import { User } from '../../../Shared/Interfaces/user';
 import { RouterService } from '../../../Shared/Services/router.service';
+import { PopupService } from '../../../Shared/Services/popup.service';
+import { Dialog } from '../../../Shared/Interfaces/dialog';
 
 @Component({
   selector: 'app-sign-up',
@@ -44,7 +46,8 @@ export class SignUpComponent {
 
   constructor(
     private userService: UserService,
-    private routerService: RouterService
+    private routerService: RouterService,
+    private popupService: PopupService
   ) {}
 
   equalPasswords(): boolean {
@@ -67,6 +70,12 @@ export class SignUpComponent {
   registration() {
     this.passwordCheck();
     if (this.equalPasswords() && this.sign_upForm.valid) {
+      const actualDialog: Dialog = {
+        title: 'Hiba',
+        text: 'Hiba történt a regisztráció során. Valószínűleg az email-cím már foglalt',
+        chose: false,
+        color: 'primary',
+      };
       this.loading = true;
       this.userService
         .signUpWithEmailAndPassword(
@@ -88,17 +97,19 @@ export class SignUpComponent {
               .createUserObject(actualUser)
               .then(() => {
                 this.loading = false;
-                this.routerService.navigate('public')
+                this.routerService.navigate('public');
               })
               .catch((err) => {
                 console.error(err);
                 this.loading = false;
+                this.popupService.displayPopUp(actualDialog);
               });
           }
         })
         .catch((err) => {
           console.error(err);
           this.loading = false;
+          this.popupService.displayPopUp(actualDialog);
         });
     }
   }
