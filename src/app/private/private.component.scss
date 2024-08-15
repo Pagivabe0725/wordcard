@@ -1,0 +1,10 @@
+@import "../Shared/Styles/basic-flex-setup.scss";
+
+#own-private-component-container-div {
+  width: 100%;
+  height: 92vh;
+  margin-top: 8vh;
+  @include bfs(row, absolute);
+  overflow: auto;
+  align-items: flex-start;
+}

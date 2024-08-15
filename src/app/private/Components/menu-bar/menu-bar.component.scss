@@ -5,6 +5,8 @@ mat-toolbar {
   background-color: $primary-dark-color;
   padding: 0;
   height: 8%;
+  position: fixed;
+  z-index: 999;
 }
 
 #own-menu_bar-component-menu-div {
@@ -41,14 +43,11 @@ mat-toolbar {
   width: 8vw;
   height: 80%;
   color: $accent-color;
-  @include bfs(relative, row);
+  @include bfs(row, relative);
 }
 
 mat-icon {
   color: $accent-color;
   width: 100%;
   height: 100%;
-  
 }
-
-

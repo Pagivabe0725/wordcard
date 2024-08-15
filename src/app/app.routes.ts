@@ -38,7 +38,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'private',
+    path: 'private/:id',
     component: PrivateComponent,
     title: 'private',
     children: [

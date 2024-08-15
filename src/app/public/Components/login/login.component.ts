@@ -68,7 +68,7 @@ export class LoginComponent implements OnDestroy {
               .subscribe((data) => {
                 this.localStorageService.createObject('user', data as User);
                 this.loading = false;
-                this.routerService.navigate('private');
+                this.routerService.navigate(`private/${data?.id}`);
               });
           }
         })

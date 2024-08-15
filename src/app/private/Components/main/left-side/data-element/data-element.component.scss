@@ -1,0 +1,30 @@
+@import "../../../../../Shared/Styles/colors.scss";
+
+mat-card {
+  width: 40vw;
+  height: 10vh;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid $primary-dark-color;
+  margin: 2.5vh 0;
+}
+
+#own-data_element-left-div {
+  width: 55%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 5%;
+  justify-content: center;
+  font-size: 3vw;
+  border-right: 1px solid $primary-dark-color;
+}
+#own-data_element-right-div {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: $accent-color;
+  font-size: 2vw;
+}
