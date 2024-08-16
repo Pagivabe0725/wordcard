@@ -1,1 +1,12 @@
-<p>create-card works!</p>
+<app-control-panel
+  (minusEvent)="minusRow(true)"
+  (plusEvent)="addRow()"
+></app-control-panel>
+
+@for (item of inputValuesArray; track $index; let i = $index) {
+<app-input-element
+  [index]="i"
+  [valueObject]="getElementByIndex(i)"
+  (setCardEvent)="setCardByIndex($event)"
+></app-input-element>
+}

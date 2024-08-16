@@ -1,0 +1,24 @@
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+@import "../../../../Shared/Styles/colors.scss";
+
+#own-control_panel-component-div {
+  @include bfs(column, fixed);
+  height: 30vh;
+  border: 1px solid $primary-color;
+  width: 5vw;
+  left: 0;
+  margin-top: 31vh;
+  margin-left: 3vw;
+  border-radius: 2vw;
+  justify-content: space-around;
+}
+
+mat-icon {
+  color: $accent-color;
+}
+
+#own-control_panel-component-creator-button {
+  width: 3vw;
+  position: relative;
+  font-size: 1vw;
+}

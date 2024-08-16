@@ -1,0 +1,21 @@
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+@import "../../../../Shared/Styles/colors.scss";
+
+.own-input_element-component-input {
+  width: 30vw;
+  height: 10vh;
+  margin: 1vh;
+  font-size: 2vw;
+  border-radius: 1em;
+  border: 1px solid $accent-color;
+  cursor: pointer;
+  display: block;
+  background-color: transparent;
+  text-align: center;
+  color: white;
+}
+
+.own-input_element-component-container-div {
+  width: 70vw;
+  @include bfs(row, relative);
+}

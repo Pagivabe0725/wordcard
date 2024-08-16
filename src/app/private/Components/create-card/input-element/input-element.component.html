@@ -1,0 +1,17 @@
+<div class="own-input_element-component-container-div">
+  <input
+    #hungarian
+    class="own-input_element-component-input"
+    [placeholder]="'magyar'"
+    (change)="changeValue('hungarian', hungarian.value)"
+    [value]="valueObject?.hungarian"
+  />
+
+  <input
+    #englis
+    class="own-input_element-component-input"
+    [placeholder]="'angol'"
+    (change)="changeValue('englis', englis.value)"
+    [value]="valueObject?.english"
+  />
+</div>
