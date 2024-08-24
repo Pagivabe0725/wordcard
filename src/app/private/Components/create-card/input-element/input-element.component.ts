@@ -9,15 +9,13 @@ import { CommonModule } from '@angular/common';
   templateUrl: './input-element.component.html',
   styleUrl: './input-element.component.scss',
 })
-export class InputElementComponent implements OnChanges {
+export class InputElementComponent  {
   @Input() public index?: number;
   @Input() valueObject?: WordCard;
   @Output() setCardEvent: EventEmitter<{ index: number; card: WordCard }> =
     new EventEmitter();
 
-    ngOnChanges(): void {
-      console.log('hello')
-    }
+   
 
   isEmpty(which: string): boolean {
     switch (which) {

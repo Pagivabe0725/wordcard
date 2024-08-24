@@ -14,6 +14,7 @@ import { User } from '../../../Shared/Interfaces/user';
 import { RouterService } from '../../../Shared/Services/router.service';
 import { PopupService } from '../../../Shared/Services/popup.service';
 import { Dialog } from '../../../Shared/Interfaces/dialog';
+import { CollectionService } from '../../../Shared/Services/collection.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -47,7 +48,8 @@ export class SignUpComponent {
   constructor(
     private userService: UserService,
     private routerService: RouterService,
-    private popupService: PopupService
+    private popupService: PopupService,
+    private collectionService: CollectionService
   ) {}
 
   equalPasswords(): boolean {
@@ -104,6 +106,10 @@ export class SignUpComponent {
                 this.loading = false;
                 this.popupService.displayPopUp(actualDialog);
               });
+
+              this.collectionService.setDatasByCollectionName('InProgress',user.user.uid,undefined,{}).then(
+                ()=>(console.log('megvan'))
+              )
           }
         })
         .catch((err) => {

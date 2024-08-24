@@ -1,12 +1,24 @@
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner color="accent"></mat-spinner>
+</span>
+}
+
 <app-control-panel
-  (minusEvent)="minusRow(true)"
+  (minusEvent)="inputValuesArray = minusRow(true, true)"
   (plusEvent)="addRow()"
+  (switchEvent)="setTitleGiving()"
+  [controlPanelSide]="titleGiving"
 ></app-control-panel>
 
-@for (item of inputValuesArray; track $index; let i = $index) {
+@if (!titleGiving) { @for (item of inputValuesArray; track $index; let i =
+$index) {
 <app-input-element
   [index]="i"
   [valueObject]="getElementByIndex(i)"
   (setCardEvent)="setCardByIndex($event)"
 ></app-input-element>
+} }@else {
+
+<app-title [inputTitle]="title" (saveEvent)="save($event)"></app-title>
 }

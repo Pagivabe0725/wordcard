@@ -1,54 +1,161 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WordCard } from '../../../Shared/Interfaces/wordcard';
 import { InputElementComponent } from './input-element/input-element.component';
 import { ControlPanelComponent } from './control-panel/control-panel.component';
 import { PopupService } from '../../../Shared/Services/popup.service';
 import { Dialog } from '../../../Shared/Interfaces/dialog';
+import { CollectionService } from '../../../Shared/Services/collection.service';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { Pack } from '../../../Shared/Interfaces/pack';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { TitleComponent } from './title/title.component';
+import { FormControl } from '@angular/forms';
+import { finalPack } from '../../../Shared/Interfaces/finalPack';
+import { RouterService } from '../../../Shared/Services/router.service';
+
 const templateCard: WordCard = { hungarian: '', english: '' };
 
 @Component({
   selector: 'app-create-card',
   standalone: true,
-  imports: [InputElementComponent, ControlPanelComponent],
+  imports: [
+    InputElementComponent,
+    ControlPanelComponent,
+    MatProgressSpinner,
+    TitleComponent,
+  ],
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.scss',
 })
-export class CreateCardComponent {
-  public title?: string;
+export class CreateCardComponent implements OnInit {
+  public title: FormControl = new FormControl('');
+  public titleGiving: boolean = false;
   public inputValuesArray: Array<WordCard> = [{ ...templateCard }];
+  private actualUser: string = '';
+  public loading: boolean = true;
 
-  constructor(private popupService: PopupService) {}
-  setCardByIndex(obj: { index: number; card: WordCard }): void {
-    this.inputValuesArray[obj.index] = obj.card;
-    console.log(this.inputValuesArray);
+  constructor(
+    private popupService: PopupService,
+    private collectionService: CollectionService,
+    private actRoute: ActivatedRoute,
+    private router: RouterService
+  ) {}
+
+  ngOnInit(): void {
+    let routerSub: Subscription;
+    let collectionSub: Subscription;
+    if (this.actRoute.parent) {
+      routerSub = this.actRoute.parent.params.subscribe((params: any) => {
+        this.actualUser = params.id;
+        collectionSub = this.collectionService
+          .getDatasFromCollectionByName(
+            'InProgress',
+            this.actualUser,
+            undefined
+          )
+          .subscribe((data) => {
+            if ((data as Pack).title) {
+              const actualDialog: Dialog = {
+                title: 'Kérdés',
+                text: 'Szeretnéd folytatni a félbehagyott paklit?',
+                chose: true,
+                color: 'accent',
+              };
+              let popSub: Subscription = this.popupService
+                .displayPopUp(actualDialog)
+                .afterClosed()
+                .subscribe((dialogResult) => {
+                  if (dialogResult) {
+                    let dataAsPack: Pack = data as Pack;
+                    this.inputValuesArray = dataAsPack.array;
+                    this.title?.setValue(dataAsPack.title);
+                  } else {
+                    this.collectionService
+                      .deleteCollectionDoc(
+                        'InProgress',
+                        this.actualUser,
+                        undefined
+                      )
+                      .then()
+                      .catch((err) => console.error(err));
+                  }
+                  this.loading = false;
+                  popSub.unsubscribe();
+                });
+            } else {
+              this.loading = false;
+            }
+
+            collectionSub.unsubscribe();
+          });
+      });
+
+      routerSub.unsubscribe();
+    }
   }
 
-  minusRow(stop: boolean): void {
-    let deletedRow: number = 0;
-    for (let i = this.inputValuesArray.length - 1; i > -1; --i) {
+  setCardByIndex(obj: { index: number; card: WordCard }): void {
+    this.inputValuesArray[obj.index] = obj.card;
+    this.setFirebaseCach();
+  }
+
+  setFirebaseCach(): void {
+    let actualPack: Pack = {
+      title: 'CurrentPack',
+      length: this.inputValuesArray.length,
+      array: this.minusRow(false, false),
+    };
+    this.collectionService
+      .setDatasByCollectionName(
+        'InProgress',
+        this.actualUser,
+        undefined,
+        actualPack
+      )
+      .catch((err) => console.error(err));
+  }
+
+  deleteFirebaseCach(): void {
+    this.collectionService
+      .deleteCollectionDoc('InProgress', this.actualUser, undefined)
+      .catch((err) => console.error(err));
+  }
+
+  minusRow(stop: boolean, dialog: boolean): Array<WordCard> {
+    let helperArray: Array<WordCard> = [...this.inputValuesArray];
+    let emptyIndexArray: Array<number> = [];
+    for (let i = helperArray.length - 1; i >= 0; --i) {
       if (
-        this.inputValuesArray[i].english === '' &&
-        this.inputValuesArray[i].hungarian === '' &&
-        this.inputValuesArray.length !== 1
+        helperArray[i].hungarian === '' &&
+        helperArray[i].english === '' &&
+        helperArray.length > 1
       ) {
-        this.inputValuesArray.splice(i, 1);
-        deletedRow++;
-        if (stop) {
-          break;
-        }
+        emptyIndexArray.push(i);
+        if (stop) break;
       }
     }
-    if (!deletedRow) {
-      const actualDialog: Dialog = {
-        title: 'hiba',
-        text: 'Nincs üres sor amit ki tudnál törölni!',
-        chose: false,
-        color: 'accent',
-      };
-      this.popupService.displayPopUp(actualDialog);
+
+    if (emptyIndexArray.length > 0) {
+      for (let i = 0; i < emptyIndexArray.length; i++) {
+        helperArray.splice(emptyIndexArray[i], 1);
+      }
     } else {
-      this.scroll();
+      if (dialog) this.minusPopup();
     }
+    this.scroll();
+
+    return helperArray;
+  }
+
+  minusPopup(): void {
+    const actualDialog: Dialog = {
+      title: 'hiba',
+      text: 'Nincs üres sor amit ki tudnál törölni!',
+      chose: false,
+      color: 'accent',
+    };
+    this.popupService.displayPopUp(actualDialog);
   }
 
   addRow(): void {
@@ -65,5 +172,58 @@ export class CreateCardComponent {
 
   getElementByIndex(index: number): WordCard {
     return this.inputValuesArray[index];
+  }
+
+  filledfield(): boolean {
+    for (let i = 0; i < this.inputValuesArray.length; i++) {
+      if (
+        this.inputValuesArray[i].hungarian !== '' &&
+        this.inputValuesArray[i].english !== ''
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  setTitleGiving() {
+    console.log(this.filledfield());
+    if (this.filledfield())
+      if (this.titleGiving) {
+        this.titleGiving = false;
+      } else {
+        this.titleGiving = true;
+      }
+  }
+
+  setTitle(title: string) {
+    this.title.setValue(title);
+  }
+
+  finalObjectCreator(): { [key: string]: finalPack } {
+    let finalObj: finalPack = {
+      pack: this.inputValuesArray,
+      changed: false,
+      date: new Date(),
+      length: this.inputValuesArray.length,
+      title: this.title.value,
+    };
+    let finaObjectWithKey: { [key: string]: finalPack } = {
+      [this.title.value]: finalObj,
+    };
+
+    return finaObjectWithKey;
+  }
+
+  save(title: string) {
+    this.setTitle(title);
+    this.collectionService.updateCollectiondoc(
+      'Packs',
+      this.actualUser,
+      undefined,
+      this.finalObjectCreator()
+    );
+    this.deleteFirebaseCach();
+    this.router.navigate(`private/${this.actualUser}/learn-card`);
   }
 }

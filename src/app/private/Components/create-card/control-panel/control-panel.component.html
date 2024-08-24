@@ -1,4 +1,6 @@
 <div id="own-control_panel-component-div">
+  @if (!controlPanelSide) {
+
   <button mat-icon-button (click)="plusEvent.emit()">
     <mat-icon>add</mat-icon>
   </button>
@@ -8,8 +10,23 @@
   <button
     mat-raised-button
     color="accent"
+    (click)="switchEvent.emit()"
     id="own-control_panel-component-creator-button"
   >
     Ok
   </button>
+  } @else {
+
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="switchEvent.emit()"
+    id="own-control_panel-component-creator-button"
+  >
+    vissza
+  </button>
+
+  
+
+  }
 </div>

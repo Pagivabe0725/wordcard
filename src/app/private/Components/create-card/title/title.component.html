@@ -1,0 +1,25 @@
+<div id="own-create-card_component-title-div">
+  <h1>Elnevezés:</h1>
+  <mat-form-field color="primary">
+    <input
+      type="text"
+      placeholder="Cím"
+      matInput
+      [value]="getFormValue()"
+      [formControl]="inputTitle"
+    />
+    @if(inputTitle.hasError('required')){
+        <mat-error>
+            Töltsd ki
+        </mat-error>
+    }
+    @else if(inputTitle.hasError('minlength')){
+        <mat-error>
+            Túl rövid (2)
+        </mat-error>
+    }
+  </mat-form-field>
+  <button color="primary" mat-stroked-button (click)="saveFunction()">
+    Véglegesít
+  </button>
+</div>

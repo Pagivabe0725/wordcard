@@ -1,0 +1,38 @@
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+@import "../../../../Shared/Styles/colors.scss";
+
+#own-create-card_component-title-div {
+  @include bfs(column, fixed);
+  height: 40vh;
+  border: 1px solid $primary-color;
+  width: 75vw;
+  left: 0;
+  margin-top: 26vh;
+  margin-left: 12.5vw;
+  margin-right: 12.5vw;
+  border-radius: 2vw;
+  justify-content: space-around;
+}
+
+h1 {
+  text-align: left;
+  display: block;
+  width: 90%;
+  padding-left: 2%;
+  margin-top: 0;
+  align-self: flex-start;
+  color: $primary-color;
+  font-size: 3vw;
+}
+
+mat-form-field {
+  width: 60vw;
+  font-size: 3vw;
+}
+
+button {
+  width: 15vw;
+  height: 6vh;
+  font-size: 1vw;
+  
+}

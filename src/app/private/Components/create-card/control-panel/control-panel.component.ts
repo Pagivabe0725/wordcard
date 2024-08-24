@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -12,4 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 export class ControlPanelComponent {
   @Output() plusEvent: EventEmitter<void> = new EventEmitter();
   @Output() minusEvent: EventEmitter<void> = new EventEmitter();
+  @Output() switchEvent: EventEmitter<void> = new EventEmitter();
+  @Input() controlPanelSide: boolean = false;
 }
