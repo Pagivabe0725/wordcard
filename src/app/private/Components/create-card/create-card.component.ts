@@ -13,6 +13,7 @@ import { TitleComponent } from './title/title.component';
 import { FormControl } from '@angular/forms';
 import { finalPack } from '../../../Shared/Interfaces/finalPack';
 import { RouterService } from '../../../Shared/Services/router.service';
+import { Timestamp } from '@angular/fire/firestore';
 
 const templateCard: WordCard = { hungarian: '', english: '' };
 
@@ -68,6 +69,7 @@ export class CreateCardComponent implements OnInit {
                 .subscribe((dialogResult) => {
                   if (dialogResult) {
                     let dataAsPack: Pack = data as Pack;
+                    this.inputValuesArray = dataAsPack.array;
                     this.inputValuesArray = dataAsPack.array;
                     this.title?.setValue(dataAsPack.title);
                   } else {
@@ -202,10 +204,10 @@ export class CreateCardComponent implements OnInit {
 
   finalObjectCreator(): { [key: string]: finalPack } {
     let finalObj: finalPack = {
-      pack: this.inputValuesArray,
+      pack: this.minusRow(false, false),
       changed: false,
-      date: new Date(),
-      length: this.inputValuesArray.length,
+      date: Timestamp.now(),
+      length: this.minusRow(false, false).length,
       title: this.title.value,
     };
     let finaObjectWithKey: { [key: string]: finalPack } = {

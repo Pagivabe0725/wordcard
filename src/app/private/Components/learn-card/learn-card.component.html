@@ -1,1 +1,10 @@
-<p>learn-card works!</p>
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner color="primary"></mat-spinner>
+</span>
+} @for (item of packArray; track $index; ) {
+<app-card-info-element
+  [actualFinalPack]="item"
+  (deleteEvent)="delete($event)"
+></app-card-info-element>
+}

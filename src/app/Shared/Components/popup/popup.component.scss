@@ -13,6 +13,8 @@
 
 #own-dialog-content {
   @include bfs(row, relative);
+  text-align: justify;
+  font-size: 1.2vw;
 }
 #own-dialog-action {
   width: 100%;
@@ -21,6 +23,7 @@
   justify-content: flex-end;
   gap: 1vw;
   font-size: 1.2vw;
+  text-align: justify;
 }
 
 button {

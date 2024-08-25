@@ -1,0 +1,44 @@
+@import "../../../../Shared/Styles/colors.scss";
+
+mat-card {
+  width: 90vw;
+  height: 10vh;
+  margin: 2vh 0;
+  padding: 0 1vw;
+  border: 1px $accent-color solid;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.own-div-highlight {
+  color: $primary-color;
+  font-size: 1.3vw;
+}
+
+.own-card_info_element-button-control-div {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 20%;
+  height: 100%;
+}
+
+.own-load-button {
+  font-size: 1.2vw;
+  width: 40%;
+  height: 60%;
+}
+
+.own-span-container-div {
+  width: 20%;
+  text-align: left;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  font-size: 1.2vw;
+  height: 100%;
+}

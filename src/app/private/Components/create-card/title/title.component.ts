@@ -55,11 +55,15 @@ export class TitleComponent implements OnInit, OnDestroy {
   }
 
   getFormValue(): string {
-    if (this.inputTitle!.value === 'CurrentPack') {
-      return '';
-    } else {
-      return this.inputTitle.value;
+    if (this.inputTitle) {
+      if (this.inputTitle.value === 'CurrentPack') {
+        this.inputTitle.setValue('')
+        return '';
+      } else {
+        return this.inputTitle.value;
+      }
     }
+    return '';
   }
 
   titleAlreadyExist(): boolean {

@@ -1,0 +1,43 @@
+<mat-card>
+  <div class="own-span-container-div">
+    <span
+      >Név:
+      <span class="own-div-highlight">{{ actualFinalPack?.title }}</span></span
+    >
+  </div>
+  <div class="own-span-container-div">
+    <span
+      >Kártyaszám:
+      <span class="own-div-highlight"
+        >{{ actualFinalPack?.length }} db</span
+      ></span
+    >
+  </div>
+  <div class="own-span-container-div">
+    @if (!actualFinalPack?.changed) {
+    <span
+      >Készítve:
+      <span class="own-div-highlight">{{
+        changeDateFormat(actualFinalPack!.date)
+      }}</span></span
+    >
+    } @else {
+    <span
+      >Módosítva:
+      <span class="own-div-highlight">{{ actualFinalPack?.date }}</span></span
+    >
+    }
+  </div>
+
+  <div class="own-card_info_element-button-control-div">
+    <button mat-flat-button color="accent" class="own-load-button">
+      Betölt
+    </button>
+    <button mat-icon-button color="accent">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button mat-icon-button color="accent" (click)="delete()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</mat-card>
