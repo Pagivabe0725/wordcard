@@ -2,9 +2,45 @@
 <span class="own-spinner">
   <mat-spinner color="primary"></mat-spinner>
 </span>
-} @for (item of packArray; track $index; ) {
+} @if (packArray.length>0) { @if (packArray.length>1) {
+<div id="own-learn-card_component-menu-div">
+  <button mat-flat-button [matMenuTriggerFor]="orderMenu" id="own-order-button">
+    Rendezés
+  </button>
+  <mat-menu #orderMenu="matMenu">
+    <button mat-menu-item (click)="setOrderType('string')">
+      A-Z (alapértelmezett)
+    </button>
+    <button mat-menu-item (click)="setOrderType('Timestamp')">
+      Létrehozás dátuma
+    </button>
+  </mat-menu>
+
+  <button mat-button (click)="changeDirection()" color="accent">
+    Megfordítás
+  </button>
+
+  <button mat-button (click)="changeOptionNumber()" color="accent">
+    @if (!moreOption) {több opció} @else {Csak egy opció}
+  </button>
+</div>
+} @for (item of packArray; track $index; let i =$index ) {
 <app-card-info-element
   [actualFinalPack]="item"
+  [isAOption]="moreOption"
   (deleteEvent)="delete($event)"
+  (changeActivityEvent)="activeOptionsArrayManipulate($event)"
+  [active]="isActiveElement(i)"
+  (loadingEvent)="loadingPackOrPacks()"
 ></app-card-info-element>
+
+}
+
+<div id="own-placeholder-div">
+  @if (activeOptinsArray.length>1) {
+  <button mat-flat-button id="own-option-load-button" (click)="loadingPackOrPacks()">Betölt</button>
+  }
+</div>
+}@else {
+<div id="own-placeholder-title">Jelenleg nincs egy paklid sem</div>
 }

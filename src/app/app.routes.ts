@@ -8,6 +8,7 @@ import { LearnCardComponent } from './private/Components/learn-card/learn-card.c
 import { CreateCardComponent } from './private/Components/create-card/create-card.component';
 import { VerbsComponent } from './private/Components/verbs/verbs.component';
 import { GameComponent } from './private/Components/game/game.component';
+import { LearningPartComponent } from './private/Components/learning-part/learning-part.component';
 
 export const routes: Routes = [
   {
@@ -56,6 +57,11 @@ export const routes: Routes = [
         path: 'learn-card',
         component: LearnCardComponent,
         title: 'learn-card',
+      },
+      {
+        path: 'learn-card/:array',
+        title: 'learning in progress',
+        component: LearningPartComponent,
       },
       {
         path: 'create-card',

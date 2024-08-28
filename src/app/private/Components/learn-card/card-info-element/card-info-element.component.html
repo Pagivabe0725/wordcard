@@ -29,11 +29,18 @@
     }
   </div>
 
-  <div class="own-card_info_element-button-control-div">
-    <button mat-flat-button color="accent" class="own-load-button">
+  <div
+    class="own-card_info_element-button-control-div"
+  >
+    @if (isAOption) {
+    <mat-slide-toggle [checked]="active" (change)="changeSlideToggelStatus()"  >Kiválaszt</mat-slide-toggle>
+    }
+    @else {
+    <button mat-flat-button color="accent" class="own-load-button" (click)="loadSinglePack()">
       Betölt
     </button>
-    <button mat-icon-button color="accent">
+    }
+    <button mat-icon-button color="accent" (click)="change()">
       <mat-icon>settings</mat-icon>
     </button>
     <button mat-icon-button color="accent" (click)="delete()">

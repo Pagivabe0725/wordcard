@@ -219,13 +219,19 @@ export class CreateCardComponent implements OnInit {
 
   save(title: string) {
     this.setTitle(title);
-    this.collectionService.updateCollectiondoc(
-      'Packs',
-      this.actualUser,
-      undefined,
-      this.finalObjectCreator()
-    );
-    this.deleteFirebaseCach();
-    this.router.navigate(`private/${this.actualUser}/learn-card`);
+    this.collectionService
+      .updateCollectiondoc(
+        'Packs',
+        this.actualUser,
+        undefined,
+        this.finalObjectCreator()
+      )
+      .then(() => {
+        this.deleteFirebaseCach();
+        this.router.navigate(`private/${this.actualUser}/learn-card`);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 }
