@@ -1,0 +1,22 @@
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+#own-click-input_component-controller-div {
+  @include bfs(row, absolute);
+  justify-content: space-around;
+  width: 80vw;
+  z-index: 99;
+  height: 20vh;
+  left: 10vw;
+  bottom: 0;
+  margin: 0;
+}
+
+mat-icon{
+    font-size: 4vh;
+}
+
+button{
+    display: block;
+    width: 5vw;
+    height: 10vh;
+
+}

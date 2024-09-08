@@ -1,0 +1,63 @@
+<div id="own-setter-part_component-setting-div">
+  <div class="own-setter-container">
+    <h1>Irány:</h1>
+    <div class="own-setter-button-div">
+      <button
+        mat-raised-button
+        (click)="setStarterSide('english')"
+        [ngClass]="starterSide === 'english' ? 'selectedButton' : ''"
+      >
+        Angol-Magyar</button
+      ><button
+        mat-raised-button
+        (click)="setStarterSide('hungarian')"
+        [ngClass]="starterSide === 'hungarian' ? 'selectedButton' : ''"
+      >
+        Magyar-Angol
+      </button>
+    </div>
+  </div>
+  <div class="own-setter-container2">
+    <h1>Hibajelölés:</h1>
+    <div class="own-setter-button-div">
+      <button
+        mat-raised-button
+        (click)="setErrorSign(true)"
+        [ngClass]="errorSign === true ? 'selectedButton' : ''"
+      >
+        Igen</button
+      ><button
+        mat-raised-button
+        (click)="setErrorSign(false)"
+        [ngClass]="errorSign === false ? 'selectedButton' : ''"
+      >
+        Nem
+      </button>
+    </div>
+  </div>
+  <div class="own-setter-container2">
+    <h1>Beviteli mód:</h1>
+    <div class="own-setter-button-div">
+      <button
+        mat-raised-button
+        (click)="setInputType('click')"
+        [ngClass]="inputType === 'click' ? 'selectedButton' : ''"
+      >
+        Egér</button
+      ><button
+        mat-raised-button
+        (click)="setInputType('write')"
+        [ngClass]="inputType === 'write' ? 'selectedButton' : ''"
+      >
+        Billentyűzet
+      </button>
+    </div>
+  </div>
+</div>
+
+@if (inputType!==undefined && errorSign!==undefined && starterSide!==undefined)
+{
+<div id="own-setter-part_component-ok_button-div">
+  <button mat-flat-button (click)="sendBasicSettings()">Kezdés</button>
+</div>
+}

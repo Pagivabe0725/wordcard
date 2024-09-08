@@ -1,0 +1,19 @@
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+@import "../../../../Shared/Styles/colors.scss";
+
+mat-card {
+  width: 60vw;
+  height: 50vh;
+  font-size: 5vw;
+  @include bfs(column, relative);
+  border: 1px solid $primary-dark-color;
+ 
+}
+
+#own-display_component-container-div {
+  @include bfs(column, absolute);
+  height: 100%;
+  width: 100%;
+  left: 0;
+  
+}

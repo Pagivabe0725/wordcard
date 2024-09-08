@@ -1,0 +1,74 @@
+@import "../../../../Shared/Styles/colors.scss";
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+
+#own-setter-part_component-setting-div {
+  width: 70vw;
+  height: 60vh;
+  margin-top: 10.25vh;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border: 0.5vh solid $primary-dark-color;
+  border-radius: 1em;
+}
+
+h1 {
+  text-align: left;
+  color: $primary-color;
+  height: 8vh;
+  font-size: 3vw;
+  margin: 0;
+  background-color: $primary-dark-color;
+  width: 90%;
+  padding-left: 1vw;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.own-setter-container {
+  height: 20vh;
+}
+
+.own-setter-container2 {
+  height: 20vh;
+  border-top: 0.5vh solid $primary-dark-color;
+}
+
+.own-setter-button-div {
+  height: 12vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 60%;
+  margin-left: auto;
+  justify-content: space-around;
+
+  button {
+    width: 40%;
+    height: 70%;
+    font-size: 1.4vw;
+    color: $accent-color;
+  }
+}
+
+.selectedButton {
+  background-color: $primary-dark-color;
+}
+
+#own-setter-part_component-ok_button-div {
+  @include bfs(row, absolute);
+  bottom: 0;
+  margin: 0;
+  right: 0;
+  width: 10vw;
+  height: 10vh;
+
+  button {
+    width: 80%;
+    height: 80%;
+    margin: 0;
+    font-size: 1.4vw;
+  }
+}

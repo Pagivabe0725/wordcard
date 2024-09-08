@@ -9,14 +9,9 @@
       [formControl]="inputTitle"
     />
     @if(inputTitle.hasError('required')){
-        <mat-error>
-            Töltsd ki
-        </mat-error>
-    }
-    @else if(inputTitle.hasError('minlength')){
-        <mat-error>
-            Túl rövid (2)
-        </mat-error>
+    <mat-error> Töltsd ki </mat-error>
+    } @else if(inputTitle.hasError('minlength')){
+    <mat-error> Túl rövid (2) </mat-error>
     }
   </mat-form-field>
   <button color="primary" mat-stroked-button (click)="saveFunction()">

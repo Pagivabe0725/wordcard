@@ -1,0 +1,26 @@
+@import "../../../../Shared/Styles/basic-flex-setup.scss";
+@import "../../../../Shared/Styles/colors.scss";
+#own-write-input_component-container-div {
+  @include bfs(row, absolute);
+  width: 100vw;
+  bottom: 0;
+  z-index: 999;
+  left: 0;
+  height: 21.25vh;
+  flex-wrap: wrap;
+}
+
+.own-single-element-div {
+  width: 3vw;
+  height: 6vh;
+  border: 1px $primary-color solid;
+  @include bfs(column, relative);
+  font-size: 1.5vw;
+  margin: 1px;
+  border-radius: 10px;
+}
+
+.own-single-element-space-div {
+  width: 2vw;
+  height: 6vh;
+}

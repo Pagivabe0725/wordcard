@@ -1,1 +1,31 @@
-<p>learning-part works!</p>
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner color="primary"></mat-spinner>
+</span>
+} @if (cardArray.length>0) { @if (starterSide!==undefined &&
+inputType!==undefined && errorSign!==undefined) {
+<app-display
+  [actualIndex]="actualRandomNumber"
+  [actualPair]="cardArray[actualRandomNumber]"
+  [firstSide]="starterSide"
+  [errorRate]="giveErrorValue()"
+></app-display>
+} @else {
+
+<app-setter-part (setterEvent)="basicSetter($event)"></app-setter-part>
+} @if (inputType==='click') {
+<app-click-input
+  (turnEvent)="turnCard()"
+  [actualIndex]="actualRandomNumber"
+  (resultEvent)="nextFunction($event)"
+></app-click-input>
+}@else if(inputType==='write') {
+<app-write-input
+  [actualCard]="cardArray[actualRandomNumber]"
+  [firstSide]="starterSide"
+  [actualIndex]="actualRandomNumber"
+  (resultEvent)="nextFunction($event)"
+></app-write-input>
+}}@else {
+<p>Nincs több kártya</p>
+}

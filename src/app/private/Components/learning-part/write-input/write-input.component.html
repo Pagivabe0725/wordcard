@@ -1,0 +1,20 @@
+<div id="own-write-input_component-container-div">
+  @for (item of actualCardArray; track $index; let i = $index) {
+  <div
+    [ngClass]="
+      actualCardArray[i] !== ' '
+        ? 'own-single-element-div '
+        : 'own-single-element-space-div'
+    "
+    [ngStyle]="
+      actualCardArray[i] !== ' ' && result !== undefined
+        ? result === true
+          ? { 'background-color': 'green' }
+          : { 'background-color': 'red' }
+        : {}
+    "
+  >
+    {{ fillableArray[i] }}
+  </div>
+  }
+</div>
