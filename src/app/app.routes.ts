@@ -69,6 +69,11 @@ export const routes: Routes = [
         title: 'create-card',
       },
       {
+        path:'create-card/:card',
+        component:CreateCardComponent,
+        title:'card-modifier'
+      },
+      {
         path: 'verb-forms',
         component: VerbsComponent,
         title: 'verb-forms',

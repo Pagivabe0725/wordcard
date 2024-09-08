@@ -15,8 +15,6 @@ export class InputElementComponent  {
   @Output() setCardEvent: EventEmitter<{ index: number; card: WordCard }> =
     new EventEmitter();
 
-   
-
   isEmpty(which: string): boolean {
     switch (which) {
       case 'hungarian':

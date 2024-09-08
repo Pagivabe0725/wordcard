@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WordCard } from '../../../Shared/Interfaces/wordcard';
 import { InputElementComponent } from './input-element/input-element.component';
 import { ControlPanelComponent } from './control-panel/control-panel.component';
@@ -29,12 +29,16 @@ const templateCard: WordCard = { hungarian: '', english: '' };
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.scss',
 })
-export class CreateCardComponent implements OnInit {
+export class CreateCardComponent implements OnInit, OnDestroy {
   public title: FormControl = new FormControl('');
   public titleGiving: boolean = false;
   public inputValuesArray: Array<WordCard> = [{ ...templateCard }];
   private actualUser: string = '';
   public loading: boolean = true;
+  public isChangeableTitle: boolean = true;
+  private routerSub?: Subscription;
+  private collectionSub?: Subscription;
+  private popSub?: Subscription;
 
   constructor(
     private popupService: PopupService,
@@ -44,57 +48,75 @@ export class CreateCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    let routerSub: Subscription;
-    let collectionSub: Subscription;
-    if (this.actRoute.parent) {
-      routerSub = this.actRoute.parent.params.subscribe((params: any) => {
-        this.actualUser = params.id;
-        collectionSub = this.collectionService
-          .getDatasFromCollectionByName(
-            'InProgress',
-            this.actualUser,
-            undefined
-          )
-          .subscribe((data) => {
-            if ((data as Pack).title) {
-              const actualDialog: Dialog = {
-                title: 'Kérdés',
-                text: 'Szeretnéd folytatni a félbehagyott paklit?',
-                chose: true,
-                color: 'accent',
-              };
-              let popSub: Subscription = this.popupService
-                .displayPopUp(actualDialog)
-                .afterClosed()
-                .subscribe((dialogResult) => {
-                  if (dialogResult) {
-                    let dataAsPack: Pack = data as Pack;
-                    this.inputValuesArray = dataAsPack.array;
-                    this.inputValuesArray = dataAsPack.array;
-                    this.title?.setValue(dataAsPack.title);
-                  } else {
-                    this.collectionService
-                      .deleteCollectionDoc(
-                        'InProgress',
-                        this.actualUser,
-                        undefined
-                      )
-                      .then()
-                      .catch((err) => console.error(err));
-                  }
-                  this.loading = false;
-                  popSub.unsubscribe();
-                });
-            } else {
-              this.loading = false;
-            }
-
-            collectionSub.unsubscribe();
-          });
-      });
-
-      routerSub.unsubscribe();
+    this.actualUserSetter();
+    if (this.router.numberOfSlide() === 4) {
+      this.newCard();
+    } else if (this.router.numberOfSlide() === 5) {
+      this.midify();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
+    this.collectionSub?.unsubscribe();
+    this.popSub?.unsubscribe();
+  }
+
+  actualUserSetter(): void {
+    this.routerSub = this.actRoute.parent!.params.subscribe((params) => {
+      this.actualUser = params['id'];
+      console.log(this.actualUser);
+    });
+  }
+
+  newCard(): void {
+    this.collectionSub = this.collectionService
+      .getDatasFromCollectionByName('InProgress', this.actualUser, undefined)
+      .subscribe((data) => {
+        if ((data as Pack).title) {
+          const actualDialog: Dialog = {
+            title: 'Kérdés',
+            text: 'Szeretnéd folytatni a félbehagyott paklit?',
+            chose: true,
+            color: 'accent',
+          };
+          this.popSub = this.popupService
+            .displayPopUp(actualDialog)
+            .afterClosed()
+            .subscribe((dialogResult) => {
+              if (dialogResult) {
+                let dataAsPack: Pack = data as Pack;
+                this.inputValuesArray = dataAsPack.array;
+                this.inputValuesArray = dataAsPack.array;
+                this.title?.setValue(dataAsPack.title);
+              } else {
+                this.collectionService
+                  .deleteCollectionDoc('InProgress', this.actualUser, undefined)
+                  .then()
+                  .catch((err) => console.error(err));
+              }
+              this.loading = false;
+            });
+        } else {
+          this.loading = false;
+        }
+      });
+  }
+
+  midify(): void {
+    this.routerSub = this.actRoute.params.subscribe((params) => {
+      if (params['card']) {
+        console.log(params['card']);
+        this.collectionSub = this.collectionService
+          .getDatasFromCollectionByName('Packs', this.actualUser, undefined)
+          .subscribe((data: any) => {
+            this.inputValuesArray = (data[params['card']] as finalPack).pack;
+            this.isChangeableTitle = false;
+            this.title.setValue(params['card'])
+            this.loading = false;
+          });
+      }
+    });
   }
 
   setCardByIndex(obj: { index: number; card: WordCard }): void {

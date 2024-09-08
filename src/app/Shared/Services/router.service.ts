@@ -15,4 +15,8 @@ export class RouterService {
   navigate(path: string): void {
     this.router.navigateByUrl(path);
   }
+
+  numberOfSlide(): number {
+    return this.router.url.split('/').length;
+  }
 }

@@ -25,6 +25,7 @@ import { Dialog } from '../../../../Shared/Interfaces/dialog';
 export class TitleComponent implements OnInit, OnDestroy {
   @Input() inputTitle!: FormControl;
   @Output() saveEvent: EventEmitter<string> = new EventEmitter();
+  @Input() isChangeableTitle?: boolean;
   private allTitleArray?: Array<string>;
   private categorySub?: Subscription;
 
@@ -48,6 +49,10 @@ export class TitleComponent implements OnInit, OnDestroy {
       Validators.required,
       Validators.minLength(2),
     ]);
+
+    if (this.isChangeableTitle === false) {
+      this.inputTitle.disable();
+    }
   }
 
   ngOnDestroy(): void {
@@ -57,7 +62,7 @@ export class TitleComponent implements OnInit, OnDestroy {
   getFormValue(): string {
     if (this.inputTitle) {
       if (this.inputTitle.value === 'CurrentPack') {
-        this.inputTitle.setValue('')
+        this.inputTitle.setValue('');
         return '';
       } else {
         return this.inputTitle.value;
@@ -94,7 +99,7 @@ export class TitleComponent implements OnInit, OnDestroy {
   }
 
   saveFunction(): void {
-    if (this.inputTitle.valid) {
+    if (this.inputTitle.valid || this.inputTitle.disabled) {
       this.popupService
         .displayPopUp(this.popUpContent())
         .afterClosed()
