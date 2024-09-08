@@ -8,7 +8,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { PopupService } from '../../../../Shared/Services/popup.service';
 import { Dialog } from '../../../../Shared/Interfaces/dialog';
 import { Subscription } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-card-info-element',
@@ -32,8 +32,11 @@ export class CardInfoElementComponent {
     action: 'add' | 'delete';
   }> = new EventEmitter();
   @Output() loadingEvent: EventEmitter<void> = new EventEmitter();
+  @Output() navigateEvent: EventEmitter<string> = new EventEmitter();
 
-  constructor(private popupService: PopupService) {}
+  constructor(
+    private popupService: PopupService,
+  ) {}
 
   changeDateFormat(date: Timestamp): string {
     let resultData: string = date.toDate().toLocaleDateString('hu-Hu', {
@@ -83,6 +86,7 @@ export class CardInfoElementComponent {
       .afterClosed()
       .subscribe((result) => {
         if (result) {
+          this.navigateEvent.emit(this.actualFinalPack!.title);
           dialogSub.unsubscribe();
         } else {
           dialogSub.unsubscribe();
@@ -104,6 +108,6 @@ export class CardInfoElementComponent {
       title: this.actualFinalPack!.title,
       action: 'add',
     });
-    this.loadingEvent.emit()
+    this.loadingEvent.emit();
   }
 }

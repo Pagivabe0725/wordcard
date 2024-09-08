@@ -133,6 +133,14 @@ export class LearnCardComponent implements OnInit, OnDestroy {
   }
 
   loadingPackOrPacks(): void {
-    this.routerService.navigate(`private/${this.actualUser}/learn-card/${this.activeOptinsArray}`)
+    this.routerService.navigate(
+      `private/${this.actualUser}/learn-card/${this.activeOptinsArray}`
+    );
+  }
+
+  navigateToModificationPage(path: string) {
+    this.routerService.navigate(
+      `private/${this.actualUser}/create-card/${path}`
+    );
   }
 }
