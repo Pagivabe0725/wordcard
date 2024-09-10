@@ -19,4 +19,8 @@ export class RouterService {
   numberOfSlide(): number {
     return this.router.url.split('/').length;
   }
+
+  urlElement(index: number): string {
+    return this.router.url.split('/')[index];
+  }
 }

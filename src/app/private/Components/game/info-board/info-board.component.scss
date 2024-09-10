@@ -1,0 +1,23 @@
+#own-info-board_component-container-div {
+  width: 100vw;
+  height: 8vh;
+  display: flex;
+  flex-direction: row;
+}
+
+#own-hp-container-div {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
+}
+
+.own-hp-div {
+  width: 4vw;
+  height: 8vh;
+  background-image: url("../../../../../../public/heart.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  
+}

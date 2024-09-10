@@ -1,0 +1,42 @@
+td {
+  width: 10vw;
+  height: 13.5vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  border-radius: 1vw;
+  border: solid 0.1vh rgba($color: #000000, $alpha: 0.5);
+}
+
+.ship {
+  background-image: url("../../../../../public/ship.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 5vw;
+
+}
+.red {
+  background-image: url("../../../../../public/red_asteroid.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 5vw;
+}
+.small {
+  background-image: url("../../../../../public/small_asteroid.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 8vw;
+}
+.big {
+  background-image: url("../../../../../public/big_asteroid.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 8vw;
+}
+
+.leaser {
+  background-image: url("../../../../../public/leaser.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 10vw;
+}

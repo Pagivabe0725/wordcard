@@ -1,1 +1,10 @@
-<p>game works!</p>
+@if (movingPoint===0) {
+<app-input-element (ratingEvent)="increaseMovingPoint($event)"></app-input-element>}
+<app-info-board [pieceOfHp]="hpArray" [movingPoint]="movingPoint" [timer]="gameTime"></app-info-board>
+@for (item of gameField; track $index;let i = $index) {
+    <tr>
+        @for (item of gameField[i]; track $index; let j = $index) {
+            <td [ngClass]="gameField? setUnit(gameField[i][j]): '' "></td>
+        }
+    </tr>
+}

@@ -1,0 +1,9 @@
+<div id="own-info-board_component-container-div">
+  <div id="own-hp-container-div">
+    <span>Mozgáspont:{{movingPoint}}</span>
+    <span>Idő:{{timer! | numberInTime }}</span>
+    @for (item of pieceOfHp; track $index) {
+    <div class="own-hp-div"></div>
+    }
+  </div>
+</div>
