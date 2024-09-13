@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { OrderServiceService } from '../../../Shared/Services/order-service.service';
 import { RouterService } from '../../../Shared/Services/router.service';
 
+
 @Component({
   selector: 'app-learn-card',
   standalone: true,
@@ -38,10 +39,11 @@ export class LearnCardComponent implements OnInit, OnDestroy {
     private collectionService: CollectionService,
     private actRoute: ActivatedRoute,
     private orderService: OrderServiceService,
-    private routerService: RouterService
+    private routerService: RouterService,
   ) {}
 
   ngOnInit(): void {
+    
     this.actRoute.parent?.params.subscribe((params) => {
       this.actualUser = params['id'];
       this.packSub = this.collectionService
@@ -54,7 +56,9 @@ export class LearnCardComponent implements OnInit, OnDestroy {
               this.packArray?.push(data[key] as finalPack);
             }
           }
+          
           this.orderFunction();
+          
           this.loading = false;
         });
     });

@@ -13,6 +13,7 @@ import { WriteInputComponent } from './write-input/write-input.component';
 import { PopupService } from '../../../Shared/Services/popup.service';
 import { Dialog } from '../../../Shared/Interfaces/dialog';
 import { RouterService } from '../../../Shared/Services/router.service';
+import { GetCardsService } from '../../Services/get-cards.service';
 
 @Component({
   selector: 'app-learning-part',
@@ -29,6 +30,7 @@ import { RouterService } from '../../../Shared/Services/router.service';
 })
 export class LearningPartComponent implements OnInit, OnDestroy {
   private categoryArray: Array<string> = [];
+  private counter:number=0;
   public cardArray: Array<WordCard> = [];
   private savedCardArray: Array<WordCard> = [];
   public errorArray: Array<number> = [];
@@ -45,7 +47,8 @@ export class LearningPartComponent implements OnInit, OnDestroy {
     private collectionService: CollectionService,
     private actRoute: ActivatedRoute,
     private popupService: PopupService,
-    private routerService: RouterService
+    private routerService: RouterService,
+    private get_cardsService: GetCardsService
   ) {}
 
   ngOnInit(): void {
@@ -59,33 +62,23 @@ export class LearningPartComponent implements OnInit, OnDestroy {
       } else {
         this.categoryArray.push(params['array']);
       }
-
-      this.loadAlCardToCardArray(this.categoryArray);
+      this.loadAlCardToCardArray();
+     
+      
     });
   }
 
-  loadAlCardToCardArray(helperArray: Array<string>) {
-    this.collSub = this.collectionService
-      .getDatasFromCollectionByName('Packs', this.actualUser, undefined)
-      .subscribe((data: any) => {
-        let helperFinalPackArray: Array<finalPack> = [];
-        let keyArray: Array<string> = Object.keys(data);
-        for (let i = 0; i < keyArray.length; i++) {
-          helperFinalPackArray.push(data[keyArray[i]]);
+  loadAlCardToCardArray() {
+    this.collSub = this.get_cardsService
+      .GetCards(this.categoryArray!, this.actualUser!)
+      .subscribe((data) => {
+        this.cardArray = this.cardArray.concat([...data.pack]);
+        this.counter++;
+        if(this.counter===this.categoryArray.length){
+          this.savedCardArray = [...this.cardArray];
+          this.randomNumberGenerator();
+          this.loading = false;
         }
-
-        for (let i = 0; i < helperArray.length; i++) {
-          for (let j = 0; j < helperFinalPackArray.length; j++) {
-            if (helperArray[i] === helperFinalPackArray[j].title) {
-              this.cardArray = this.cardArray.concat(
-                helperFinalPackArray[j].pack
-              );
-            }
-          }
-        }
-        this.randomNumberGenerator();
-        this.savedCardArray = [...this.cardArray];
-        this.loading = false;
       });
   }
 
@@ -126,7 +119,7 @@ export class LearningPartComponent implements OnInit, OnDestroy {
   }
 
   nextFunction(obj: { index: number; result: boolean }) {
-    console.log(obj)
+    console.log(obj);
     if (this.inputType === 'write') {
       this.turnCard();
       setTimeout(() => {
