@@ -58,14 +58,16 @@ export class CreateCardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
-    this.collectionSub?.unsubscribe();
     this.popSub?.unsubscribe();
+    this.collectionSub?.unsubscribe();
+    if (!this.isChangeableTitle) {
+      this.deleteFirebaseCach();
+    }
   }
 
   actualUserSetter(): void {
     this.routerSub = this.actRoute.parent!.params.subscribe((params) => {
       this.actualUser = params['id'];
-      console.log(this.actualUser);
     });
   }
 
@@ -74,6 +76,7 @@ export class CreateCardComponent implements OnInit, OnDestroy {
       .getDatasFromCollectionByName('InProgress', this.actualUser, undefined)
       .subscribe((data) => {
         if ((data as Pack).title) {
+          console.log(data);
           const actualDialog: Dialog = {
             title: 'Kérdés',
             text: 'Szeretnéd folytatni a félbehagyott paklit?',
@@ -100,6 +103,7 @@ export class CreateCardComponent implements OnInit, OnDestroy {
         } else {
           this.loading = false;
         }
+        this.collectionSub?.unsubscribe();
       });
   }
 
@@ -112,7 +116,7 @@ export class CreateCardComponent implements OnInit, OnDestroy {
           .subscribe((data: any) => {
             this.inputValuesArray = (data[params['card']] as finalPack).pack;
             this.isChangeableTitle = false;
-            this.title.setValue(params['card'])
+            this.title.setValue(params['card']);
             this.loading = false;
           });
       }
@@ -165,7 +169,9 @@ export class CreateCardComponent implements OnInit, OnDestroy {
         helperArray.splice(emptyIndexArray[i], 1);
       }
     } else {
-      if (dialog) this.minusPopup();
+      if (dialog) {
+        this.minusPopup();
+      }
     }
     this.scroll();
 

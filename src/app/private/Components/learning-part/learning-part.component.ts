@@ -126,6 +126,7 @@ export class LearningPartComponent implements OnInit, OnDestroy {
   }
 
   nextFunction(obj: { index: number; result: boolean }) {
+    console.log(obj)
     if (this.inputType === 'write') {
       this.turnCard();
       setTimeout(() => {
