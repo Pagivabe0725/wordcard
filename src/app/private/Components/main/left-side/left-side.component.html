@@ -1,8 +1,10 @@
 <div id="own-left-side-div_of_main-component">
   <h1>Adatok</h1>
-  <app-data-element></app-data-element>
-  <app-data-element></app-data-element>
-  <app-data-element></app-data-element>
-  <app-data-element></app-data-element>
-  <app-data-element></app-data-element>
+  @for (item of dataArray; track $index; let i = $index) {
+
+  <app-data-element
+    [title]="dataArray![i].title"
+    [value]="dataArray![i].value"
+  ></app-data-element>
+  }
 </div>

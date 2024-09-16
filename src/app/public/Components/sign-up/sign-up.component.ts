@@ -15,6 +15,7 @@ import { RouterService } from '../../../Shared/Services/router.service';
 import { PopupService } from '../../../Shared/Services/popup.service';
 import { Dialog } from '../../../Shared/Interfaces/dialog';
 import { CollectionService } from '../../../Shared/Services/collection.service';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-sign-up',
@@ -93,7 +94,7 @@ export class SignUpComponent {
               firstName: this.sign_upForm.get('firstName')?.value,
               badAnswerToday: 0,
               goodAnswerToday: 0,
-              lastLoggedIn: new Date(),
+              lastLoggedIn: Timestamp.now(),
             };
             this.userService
               .createUserObject(actualUser)
@@ -107,10 +108,19 @@ export class SignUpComponent {
                 this.popupService.displayPopUp(actualDialog);
               });
 
-              this.collectionService.setDatasByCollectionName('InProgress',user.user.uid,undefined,{}).then(
-                ()=>(console.log('megvan'))
+            this.collectionService
+              .setDatasByCollectionName(
+                'InProgress',
+                user.user.uid,
+                undefined,
+                {}
               )
+              .catch((err) => console.error(err));
           }
+
+          this.collectionService
+            .setDatasByCollectionName('Packs', user.user!.uid, undefined, {})
+            .catch((err) => console.error(err));
         })
         .catch((err) => {
           console.error(err);

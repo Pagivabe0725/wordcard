@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
@@ -6,8 +6,9 @@ import { MatCardModule } from '@angular/material/card';
   standalone: true,
   imports: [MatCardModule],
   templateUrl: './data-element.component.html',
-  styleUrl: './data-element.component.scss'
+  styleUrl: './data-element.component.scss',
 })
 export class DataElementComponent {
-
+  @Input() title!: string;
+  @Input() value!: string;
 }

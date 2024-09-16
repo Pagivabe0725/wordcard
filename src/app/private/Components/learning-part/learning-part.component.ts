@@ -15,6 +15,8 @@ import { Dialog } from '../../../Shared/Interfaces/dialog';
 import { RouterService } from '../../../Shared/Services/router.service';
 import { GetCardsService } from '../../Services/get-cards.service';
 import { LocalStorageService } from '../../../Shared/Services/local-storage.service';
+import { User } from '../../../Shared/Interfaces/user';
+import { UserService } from '../../../Shared/Services/user.service';
 
 @Component({
   selector: 'app-learning-part',
@@ -49,7 +51,8 @@ export class LearningPartComponent implements OnInit, OnDestroy {
     private popupService: PopupService,
     private routerService: RouterService,
     private get_cardsService: GetCardsService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -145,6 +148,7 @@ export class LearningPartComponent implements OnInit, OnDestroy {
     this.cardArray.splice(index, 1);
     this.errorArray.splice(index, 1);
     this.randomNumberGenerator();
+    this.changeUserAnswersNumber('good')
   }
 
   badAnswer(index: number) {
@@ -152,6 +156,23 @@ export class LearningPartComponent implements OnInit, OnDestroy {
       this.errorArray[index] <= 5 ? this.errorArray[index]++ : '';
     }
     this.randomNumberGenerator();
+    this.changeUserAnswersNumber('bad')
+  }
+
+  changeUserAnswersNumber(answer: 'good' | 'bad'): void {
+    let user: User = this.localStorageService.chosenObjectFromLocalStorage(
+      'user'
+    ) as User;
+    if (answer === 'good') {
+      user.goodAnswerToday++;
+    } else {
+      user.badAnswerToday++;
+    }
+
+    this.userService
+      .createUserObject(user)
+      .then(() => this.localStorageService.createObject('user', user))
+      .catch((err) => console.error(err));
   }
 
   giveErrorValue(): string {

@@ -1,2 +1,14 @@
-<app-left-side></app-left-side>
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner color="primary"></mat-spinner>
+</span>
+} @else {
+
+<app-left-side
+  [cardNumber]="cardNumber!"
+  [categoryNumber]="categoryNumber!"
+  [badAnswerNumber]="badAnswerNumber!"
+  [goodAnswerNumber]="goodAnswerNumber!"
+></app-left-side>
 <app-right-side></app-right-side>
+}

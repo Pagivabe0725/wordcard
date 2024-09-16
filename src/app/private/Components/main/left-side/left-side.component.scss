@@ -3,13 +3,12 @@
 
 #own-left-side-div_of_main-component {
   @include bfs(column, absolute);
+ 
   width: 49vw;
   height: 92vh;
   left: 0;
   border-right: 1vw inset $primary-dark-color;
-}
-
-h1 {
-  margin-bottom: auto;
   
 }
+
+
