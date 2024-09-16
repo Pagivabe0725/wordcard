@@ -1,57 +1,65 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { InfoBoardComponent } from './info-board/info-board.component';
 import { RouterService } from '../../../Shared/Services/router.service';
 import { Asteroid } from '../../../Shared/Interfaces/asteroid';
 import { CommonModule } from '@angular/common';
 import { InputElementComponent } from './input-element/input-element.component';
+import { GetCardsService } from '../../Services/get-cards.service';
+import { WordCard } from '../../../Shared/Interfaces/wordcard';
+import { LocalStorageService } from '../../../Shared/Services/local-storage.service';
+import { User } from '../../../Shared/Interfaces/user';
+import { Subscription } from 'rxjs';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { PopupService } from '../../../Shared/Services/popup.service';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [InfoBoardComponent, CommonModule, InputElementComponent],
+  imports: [
+    InfoBoardComponent,
+    CommonModule,
+    InputElementComponent,
+    MatProgressSpinner,
+  ],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
+  private timeIntervall!: any;
+  public loadedCardArray:boolean=false;
+  private cardSub!: Subscription;
+  public loading: boolean = true;
+  public cardArray: Array<WordCard> = [];
+  public actualIndex?: number;
+  public copiedCardArray: Array<WordCard> = [];
   public hpArray: Array<boolean> = [];
   public gameField: Array<Array<Asteroid | string>> = [];
   public shipPosition?: number;
-  public movingPoint: number = 3;
+  public movingPoint: number = 5;
   private moving: boolean = true;
   private leaserCoordinateArray: Array<number> = [];
   private asteroidArray: Array<{ x: number; y: number }> = [];
   public gameTime: number = 0;
+  public hittedFieldArray: Array<{
+    y: number;
+    x: number;
+    destroyTime: number;
+  }> = [];
   private smallAsteroid: Asteroid = {
     name: 'small',
     hp: 1,
     timer: 0,
     speed: 1,
   };
-  private bigAsteroid: Asteroid = { name: 'big', hp: 2, timer: 0, speed: 2 };
-  private redAsteroid: Asteroid = { name: 'red', hp: 3, timer: 0, speed: 3 };
+  private bigAsteroid: Asteroid = { name: 'big', hp: 2, timer: 0, speed: 4 };
+  private redAsteroid: Asteroid = { name: 'red', hp: 3, timer: 0, speed: 6 };
   private newAsteroidsTimer: number = 10;
-  constructor(private routerService: RouterService) {}
-
-  ngOnInit(): void {
-    this.difficultyLevel();
-    this.setBasicField();
-    this.setStartPositionOfShip();
-    this.StarterAsteroids();
-    //sthis.testAsteroids()
-    this.game();
-  }
-
-  game(): void {
-    let game = setInterval(() => {
-      this.gameTime++;
-      this.increaseAsteroidsTimer();
-      this.newAsteroids();
-      this.moveAsteroid();
-      if (this.asteroidArray.length > 50 || this.stopGame()) {
-        clearInterval(game);
-      }
-    }, 1000);
-  }
+  constructor(
+    private routerService: RouterService,
+    private get_cardService: GetCardsService,
+    private localStorageService: LocalStorageService,
+    private popupService: PopupService
+  ) {}
 
   @HostListener('window:keydown', ['$event'])
   onKeydown(event: KeyboardEvent) {
@@ -72,6 +80,82 @@ export class GameComponent implements OnInit {
     }
   }
 
+  ngOnInit(): void {
+    this.cardSub = this.get_cardService
+      .GetCards(
+        'all',
+        (this.localStorageService.chosenObjectFromLocalStorage('user') as User)
+          .id
+      )
+      .subscribe((data) => {
+        console.log(data);
+        this.cardArray = this.cardArray.concat(data.pack);
+        this.copiedCardArray = [...this.cardArray];
+      });
+    setTimeout(() => {
+      if(this.cardArray.length>=20){
+      this.startSettings();
+      this.loadedCardArray=true;
+      }
+      else{this.loading=false}
+    }, 3000);
+  }
+
+  ngOnDestroy(): void {
+    this.cardSub.unsubscribe();
+    clearInterval(this.timeIntervall!);
+  }
+
+  startSettings(): void {
+    clearInterval(this.timeIntervall);
+    this.asteroidArray = [];
+    this.hittedFieldArray = [];
+    this.movingPoint = 5;
+    this.moving = true;
+    this.setBasicField();
+    this.difficultyLevel();
+    this.setStartPositionOfShip();
+    this.StarterAsteroids();
+    //this.testAsteroids();
+    this.actualIndex = this.randomNumberGenerator(this.cardArray.length);
+    this.loading = false;
+    this.game();
+    if (!this.cardArray.length) {
+      this.cardArray = [...this.copiedCardArray];
+    }
+  }
+
+  game(): void {
+    let game: any = setInterval(() => {
+      console.log('a');
+      this.decreaseHitValue();
+      this.increaseAsteroidsTimer();
+      this.moveAsteroid();
+      this.newAsteroids();
+      this.deleteAsteroidsOfHittedAreas();
+
+      if (this.asteroidArray.length > 50 || this.stopGame()) {
+        clearInterval(game);
+        this.moving = false;
+        this.popupService
+          .displayPopUp({
+            title: 'Vereség',
+            text: 'Sajnos túl sok találatot kaptál! Szeretnéd újrakezdeni?',
+            chose: true,
+            color: 'accent',
+          })
+          .afterClosed()
+          .subscribe((result) => {
+            if (result) {
+              this.startSettings();
+            }
+          });
+      }
+      this.gameTime++;
+    }, 1000);
+    this.timeIntervall = game;
+  }
+
   choosenDifficulty(): string {
     return this.routerService
       .urlElement(this.routerService.numberOfSlide() - 1)
@@ -82,13 +166,13 @@ export class GameComponent implements OnInit {
     const level: string = this.choosenDifficulty();
     switch (level) {
       case 'hard':
-        this.setGameProperties(2, 2, 4, 5, 8);
+        this.setGameProperties(2, 3, 5, 6, 8);
         break;
       case 'mid':
-        this.setGameProperties(3, 3, 4, 5, 8);
+        this.setGameProperties(3, 3, 6, 7, 8);
         break;
       case 'easy':
-        this.setGameProperties(5, 3, 5, 6, 10);
+        this.setGameProperties(5, 4, 7, 8, 10);
         break;
       default:
         this.setHpArray(3);
@@ -139,6 +223,7 @@ export class GameComponent implements OnInit {
   }
 
   setBasicField(): void {
+    this.gameField = [];
     for (let i = 0; i < 6; i++) {
       let helperArray = [];
       for (let j = 0; j < 10; j++) {
@@ -169,13 +254,17 @@ export class GameComponent implements OnInit {
   }
 
   shot(): void {
-    for (let i = 1; i < 10; i++) {
-      if (this.gameField[this.shipPosition!][i] == '') {
-        this.gameField[this.shipPosition!][i] = 'leaser';
-        this.leaserCoordinateArray.push(i);
-      } else {
-        this.decreaseHp(this.shipPosition!, i);
-        break;
+    if (typeof this.gameField[this.shipPosition!][1] === 'object') {
+      this.decreaseHp(this.shipPosition!, 1);
+    } else {
+      for (let i = 1; i < 10; i++) {
+        if (this.gameField[this.shipPosition!][i] == '') {
+          this.gameField[this.shipPosition!][i] = 'leaser';
+          this.leaserCoordinateArray.push(i);
+        } else {
+          this.decreaseHp(this.shipPosition!, i);
+          break;
+        }
       }
     }
   }
@@ -207,6 +296,17 @@ export class GameComponent implements OnInit {
 
   increaseMovingPoint(value: number) {
     this.movingPoint += value;
+    if (value === 0) {
+      setTimeout(() => {
+        this.actualIndex = this.randomNumberGenerator(this.cardArray.length);
+      }, 1500);
+    } else {
+      this.cardArray.splice(this.actualIndex!, 1);
+      if (!this.cardArray.length) {
+        this.cardArray = [...this.copiedCardArray];
+      }
+      this.actualIndex = this.randomNumberGenerator(this.cardArray.length);
+    }
   }
 
   randomAsteroid(): Asteroid {
@@ -238,7 +338,7 @@ export class GameComponent implements OnInit {
 
   newAsteroids(): void {
     if (this.gameTime % this.newAsteroidsTimer === 0 && this.gameTime > 0) {
-      this.createAsteroids(this.randomNumberGenerator(7) + 1);
+      this.createAsteroids(this.randomNumberGenerator(5) + 1);
     }
   }
 
@@ -279,40 +379,26 @@ export class GameComponent implements OnInit {
       this.AllXPosition()
     ).sort();
 
-    for (let i = 0; i < asteroidsInOrder.length; i++) {
+    for (const i of asteroidsInOrder) {
       for (let j = 0; j < this.asteroidArray.length; j++) {
-        if (this.asteroidArray[j].x === asteroidsInOrder[i]) {
-          if (this.asteroidArray[j].x > 0) {
-            if (
-              (
-                this.gameField[this.asteroidArray[j].y][
-                  this.asteroidArray[j].x
-                ] as Asteroid
-              ).timer %
-                (
-                  this.gameField[this.asteroidArray[j].y][
-                    this.asteroidArray[j].x
-                  ] as Asteroid
-                ).speed ===
-              0
-            ) {
-              const actualAsteroid: Asteroid = this.gameField[
-                this.asteroidArray[j].y
-              ][this.asteroidArray[j].x] as Asteroid;
-              const newPositions: { x: number; y: number } | undefined =
-                this.movingAnalyse(
-                  this.asteroidArray[j].y,
-                  this.asteroidArray[j].x,
-                  j
-                );
-              if (newPositions !== undefined) {
-                this.gameField[this.asteroidArray[j].y][
-                  this.asteroidArray[j].x
-                ] = '';
-                this.gameField[newPositions.y][newPositions.x] = actualAsteroid;
-                this.asteroidArray[j] = newPositions;
-              }
-            }
+        const actualAsteroid: Asteroid = this.gameField[
+          this.asteroidArray[j].y
+        ][this.asteroidArray[j].x] as Asteroid;
+        if (
+          this.asteroidArray[j].x === i &&
+          actualAsteroid.timer % actualAsteroid.speed === 0
+        ) {
+          const newPosition: { x: number; y: number } | undefined =
+            this.movingAnalyse(
+              this.asteroidArray[j].y,
+              this.asteroidArray[j].x,
+              j
+            );
+          if (newPosition) {
+            this.gameField[this.asteroidArray[j].y][this.asteroidArray[j].x] =
+              '';
+            this.asteroidArray[j] = newPosition;
+            this.gameField[newPosition.y][newPosition.x] = actualAsteroid;
           }
         }
       }
@@ -324,7 +410,6 @@ export class GameComponent implements OnInit {
     for (let i = 0; i < this.asteroidArray.length; i++) {
       helperSet.add(this.asteroidArray[i].x);
     }
-
     return helperSet;
   }
 
@@ -333,24 +418,25 @@ export class GameComponent implements OnInit {
     actualX: number,
     index: number
   ): { y: number; x: number } | undefined {
-    if (this.gameField[actualY][actualX - 1] === '' && actualX - 1 !== 0) {
-      this.asteroidArray[index] = { y: actualY, x: actualX - 1 };
-      this.gameField[actualY][actualX] = '';
+    if (actualX >= 1 && this.gameField[actualY][actualX - 1] === '') {
       return { y: actualY, x: actualX - 1 };
     } else if (
-      this.gameField[actualY][actualX - 1] === 'ship' ||
-      actualX - 1 === 0
+      actualX >= 1 &&
+      this.gameField[actualY][actualX - 1] === 'ship'
     ) {
-      if (this.hpArray) {
-        this.hpArray.splice(this.hpArray.length - 1);
-        this.destroyAstreoid(actualY, actualX, index);
-        return undefined;
-      }
-    } else {
-      const actualAsteroidName: string = (
-        this.gameField[actualY][actualX] as Asteroid
-      ).name;
-      switch (actualAsteroidName) {
+      this.destroyAstreoid(actualY, actualX, index);
+      this.hittedFieldArray.push({
+        y: actualY,
+        x: actualX - 1,
+        destroyTime: this.gameTime + 2,
+      });
+      this.hpArray ? this.hpArray.splice(this.hpArray.length - 1, 1) : '';
+      return undefined;
+    } else if (actualX >= 1 && this.gameField[actualY][actualX - 1] !== '') {
+      const actualAsteroid: Asteroid = this.gameField[actualY][
+        actualX
+      ] as Asteroid;
+      switch (actualAsteroid.name) {
         case 'small':
           if (
             actualY + 1 <= 5 &&
@@ -358,39 +444,54 @@ export class GameComponent implements OnInit {
             this.gameField[actualY - 1][actualX - 1] === '' &&
             this.gameField[actualY + 1][actualX - 1] === ''
           ) {
-            const direction: number = this.randomNumberGenerator(2);
-            if (direction) {
-              return this.asteroidDown(actualY, actualX);
-            } else {
-              return this.asteroidUp(actualY, actualX);
-            }
+            const randomDirection = this.randomNumberGenerator(2);
+            return randomDirection
+              ? this.asteroidDown(actualY, actualX)
+              : this.asteroidUp(actualY, actualX);
+          } else if (
+            actualY === 0 &&
+            this.gameField[actualY + 1][actualX - 1] === ''
+          ) {
+            return this.asteroidDown(actualY, actualX);
+          } else if (
+            actualY === 5 &&
+            this.gameField[actualY - 1][actualX - 1] === ''
+          ) {
+            return this.asteroidUp(actualY, actualX);
+          } else if (
+            actualY + 1 <= 5 &&
+            actualY - 1 >= 0 &&
+            this.gameField[actualY - 1][actualX - 1] === '' &&
+            this.gameField[actualY + 1][actualX - 1] !== ''
+          ) {
+            return this.asteroidUp(actualY, actualX);
+          } else if (
+            actualY + 1 <= 5 &&
+            actualY - 1 >= 0 &&
+            this.gameField[actualY - 1][actualX - 1] !== '' &&
+            this.gameField[actualY + 1][actualX - 1] === ''
+          ) {
+            return this.asteroidDown(actualY, actualX);
           } else {
-            if (
-              actualY - 1 >= 0 &&
-              this.gameField[actualY - 1][actualX - 1] === ''
-            ) {
-              return this.asteroidUp(actualY, actualX);
-            } else if (
-              actualY + 1 <= 5 &&
-              this.gameField[actualY + 1][actualX - 1] === ''
-            ) {
-              return this.asteroidDown(actualY, actualX);
-            } else {
-              return { y: actualY, x: actualX };
-            }
+            break;
           }
 
         case 'big':
           if (
-            actualX > 0 &&
-            typeof this.gameField[actualY][actualX - 1] === 'object' &&
-            (this.gameField[actualY][actualX - 1] as Asteroid).name === 'red'
+            actualX >= 1 &&
+            typeof this.gameField[actualY][actualX - 1] === 'object'
           ) {
-            this.gameField[actualY][actualX] = { ...this.redAsteroid };
+            const inFrontOfThis: Asteroid = this.gameField[actualY][
+              actualX - 1
+            ] as Asteroid;
+            if (inFrontOfThis.name === 'red') {
+              this.gameField[actualY][actualX] = { ...this.redAsteroid };
+            }
             return undefined;
           }
       }
     }
+
     return { y: actualY, x: actualX };
   }
 
@@ -406,27 +507,25 @@ export class GameComponent implements OnInit {
     for (let i = 0; i < this.asteroidArray.length; i++) {
       if (this.asteroidArray[i].x === x && this.asteroidArray[i].y === y) {
         (this.gameField[y][x] as Asteroid).hp--;
-        this.destroyAstreoid(y, x, i);
+        (this.gameField[y][x] as Asteroid).hp === 0
+          ? this.destroyAstreoid(y, x, i)
+          : '';
         break;
       }
     }
   }
 
   destroyAstreoid(y: number, x: number, index: number): void {
-    console.log(this.gameField[y][x] as Asteroid);
-    if ((this.gameField[y][x] as Asteroid).hp <= 0) {
-      this.gameField[y][x] = '';
-      this.asteroidArray.splice(index, 1);
-    }
+    this.asteroidArray.splice(index, 1);
+    this.gameField[y][x] = '';
   }
 
   testAsteroids() {
     {
       ///Asteroids
-      this.gameField[1][7] = { ...this.bigAsteroid };
-      this.gameField[1][8] = { ...this.smallAsteroid };
+      this.gameField[0][2] = { ...this.smallAsteroid };
+      this.gameField[1][3] = { ...this.smallAsteroid };
     }
-
     for (let i = 0; i < this.gameField.length; i++) {
       for (let j = 0; j < this.gameField[i].length; j++) {
         if (typeof this.gameField[i][j] === 'object') {
@@ -436,10 +535,58 @@ export class GameComponent implements OnInit {
     }
   }
 
+  searchGoodPossitions(): Array<number> {
+    let helperArray: Array<number> = [];
+    for (let i = 0; i < this.asteroidArray.length; i++) {
+      if (this.asteroidArray[i].x === 0) {
+        helperArray.push(i);
+      }
+    }
+    return helperArray;
+  }
+
+  deleteAsteroidsOfHittedAreas(): void {
+    while (this.searchGoodPossitions().length > 0) {
+      const helper: Array<number> = this.searchGoodPossitions();
+      this.hittedFieldArray.push({
+        x: this.asteroidArray[helper[0]].x,
+        y: this.asteroidArray[helper[0]].y,
+        destroyTime: this.gameTime + 5,
+      });
+      this.destroyAstreoid(
+        this.asteroidArray[helper[0]].y,
+        this.asteroidArray[helper[0]].x,
+        helper[0]
+      );
+      this.hpArray.splice(this.hpArray.length - 1, 1);
+    }
+  }
+
   stopGame(): boolean {
     if (this.hpArray.length === 0) {
       return true;
     }
     return false;
+  }
+
+  getHittedFieldValue(yCoordinate: number, xCoordinate: number): boolean {
+    for (let i of this.hittedFieldArray) {
+      if (i.x === xCoordinate && i.y === yCoordinate && this.hittedFieldArray) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  decreaseHitValue(): void {
+    let helperArray: Array<number> = [];
+    for (let i = 0; i < this.hittedFieldArray.length; i++) {
+      if (this.hittedFieldArray[i].destroyTime === this.gameTime) {
+        helperArray.push(i);
+      }
+    }
+    for (let i = 0; i < helperArray.length; i++) {
+      this.hittedFieldArray.splice(0, 1);
+    }
   }
 }

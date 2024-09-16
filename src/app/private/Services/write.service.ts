@@ -27,10 +27,11 @@ export class WriteService {
   plusHelper(obj: WriteHelper): WriteHelper {
     while (
       (obj.fillableArray[obj.workIndex] !== ' ' ||
-      obj.actualCardArray[obj.workIndex] === ' ') && obj.workIndex!==obj.actualCardArray.length-1
+        obj.actualCardArray[obj.workIndex] === ' ') &&
+      obj.workIndex !== obj.actualCardArray.length - 1
     ) {
-        obj.workIndex++;
-        console.log( obj.workIndex)   
+      obj.workIndex++;
+      console.log(obj.workIndex);
     }
     return obj;
   }

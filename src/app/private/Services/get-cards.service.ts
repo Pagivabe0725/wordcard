@@ -9,7 +9,10 @@ import { CollectionService } from '../../Shared/Services/collection.service';
 export class GetCardsService {
   constructor(private collectionService: CollectionService) {}
 
-  GetCards(keyOrKeys: Array<string>, user: string): Observable<finalPack> {
+  GetCards(
+    keyOrKeys: Array<string> | 'all',
+    user: string
+  ): Observable<finalPack> {
     let obj: any;
 
     return new Observable((subsriber: Subscriber<finalPack>) => {
@@ -20,7 +23,11 @@ export class GetCardsService {
             obj = data;
           }
           for (let i = 0; i < Object.keys(obj).length; i++) {
-            if (keyOrKeys.includes(Object.keys(obj)[i])) {
+            if (typeof keyOrKeys === 'object') {
+              if (keyOrKeys.includes(Object.keys(obj)[i])) {
+                subsriber.next(Object.values(obj as object)[i]);
+              }
+            } else {
               subsriber.next(Object.values(obj as object)[i]);
             }
           }

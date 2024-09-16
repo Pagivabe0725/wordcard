@@ -1,10 +1,31 @@
-@if (movingPoint===0) {
-<app-input-element (ratingEvent)="increaseMovingPoint($event)"></app-input-element>}
-<app-info-board [pieceOfHp]="hpArray" [movingPoint]="movingPoint" [timer]="gameTime"></app-info-board>
+@if (loading) {
+<span class="own-spinner">
+  <mat-spinner color="accent"></mat-spinner>
+</span>
+} @if (cardArray.length<20 && !loadedCardArray ) {
+<p>
+  Nincs elég kártyád a játékhoz!({{ 20 - cardArray.length }} kell még legalább)
+</p>
+} @else { @if (movingPoint===0 && hpArray.length) {
+<app-input-element
+  (ratingEvent)="increaseMovingPoint($event)"
+  [actualCard]="cardArray[actualIndex!]"
+></app-input-element
+>}
+<app-info-board
+  [pieceOfHp]="hpArray"
+  [movingPoint]="movingPoint"
+  [timer]="gameTime"
+></app-info-board>
 @for (item of gameField; track $index;let i = $index) {
-    <tr>
-        @for (item of gameField[i]; track $index; let j = $index) {
-            <td [ngClass]="gameField? setUnit(gameField[i][j]): '' "></td>
-        }
-    </tr>
-}
+<tr>
+  @for (item of gameField[i]; track $index; let j = $index) {
+  <td
+    [ngClass]="gameField ? setUnit(gameField[i][j]) : ''"
+    [ngStyle]="
+      getHittedFieldValue(i, j) ? { 'background-color': 'red' } : { '': '' }
+    "
+  ></td>
+  }
+</tr>
+} }

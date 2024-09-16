@@ -1,1 +1,9 @@
-<div id="own-input-element_container-div"><button (click)="rating()">ok</button></div>
+<div id="own-input-element_container-div">
+  <div id="own-display-element">{{ displayedWord!}}</div>
+  <app-write-input
+    [actualCard]="actualCard"
+    [actualIndex]="0"
+    [firstSide]="'hungarian'"
+    (resultEvent)="checker($event)"
+  ></app-write-input>
+</div>

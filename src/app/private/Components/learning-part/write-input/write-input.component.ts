@@ -52,6 +52,7 @@ export class WriteInputComponent implements OnInit {
           index: this.actualIndex!,
           result: this.getResultWithoutUndifind(),
         });
+        
         setTimeout(() => {
           this.startSetting();
         }, 1500);

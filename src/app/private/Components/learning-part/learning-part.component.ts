@@ -30,7 +30,7 @@ import { GetCardsService } from '../../Services/get-cards.service';
 })
 export class LearningPartComponent implements OnInit, OnDestroy {
   private categoryArray: Array<string> = [];
-  private counter:number=0;
+  private counter: number = 0;
   public cardArray: Array<WordCard> = [];
   private savedCardArray: Array<WordCard> = [];
   public errorArray: Array<number> = [];
@@ -63,8 +63,6 @@ export class LearningPartComponent implements OnInit, OnDestroy {
         this.categoryArray.push(params['array']);
       }
       this.loadAlCardToCardArray();
-     
-      
     });
   }
 
@@ -74,7 +72,7 @@ export class LearningPartComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.cardArray = this.cardArray.concat([...data.pack]);
         this.counter++;
-        if(this.counter===this.categoryArray.length){
+        if (this.counter === this.categoryArray.length) {
           this.savedCardArray = [...this.cardArray];
           this.randomNumberGenerator();
           this.loading = false;
@@ -119,7 +117,6 @@ export class LearningPartComponent implements OnInit, OnDestroy {
   }
 
   nextFunction(obj: { index: number; result: boolean }) {
-    console.log(obj);
     if (this.inputType === 'write') {
       this.turnCard();
       setTimeout(() => {
@@ -168,7 +165,6 @@ export class LearningPartComponent implements OnInit, OnDestroy {
   }
 
   chosePopup() {
-    console.log('ASDASFAF');
     const dialog: Dialog = {
       title: 'Sikeres teljesítés',
       text: 'Sikeresen teljesítetted a paklit. Szeretnéd újrakezdeni?',
