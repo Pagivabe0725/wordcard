@@ -14,6 +14,8 @@ import { FormControl } from '@angular/forms';
 import { finalPack } from '../../../Shared/Interfaces/finalPack';
 import { RouterService } from '../../../Shared/Services/router.service';
 import { Timestamp } from '@angular/fire/firestore';
+import { LocalStorageService } from '../../../Shared/Services/local-storage.service';
+import { User } from '../../../Shared/Interfaces/user';
 
 const templateCard: WordCard = { hungarian: '', english: '' };
 
@@ -44,7 +46,8 @@ export class CreateCardComponent implements OnInit, OnDestroy {
     private popupService: PopupService,
     private collectionService: CollectionService,
     private actRoute: ActivatedRoute,
-    private router: RouterService
+    private router: RouterService,
+    private localStorageService:LocalStorageService
   ) {}
 
   ngOnInit(): void {
@@ -66,9 +69,7 @@ export class CreateCardComponent implements OnInit, OnDestroy {
   }
 
   actualUserSetter(): void {
-    this.routerSub = this.actRoute.parent!.params.subscribe((params) => {
-      this.actualUser = params['id'];
-    });
+    this.actualUser=this.localStorageService.getOnePropertyOfObject('user','id')
   }
 
   newCard(): void {

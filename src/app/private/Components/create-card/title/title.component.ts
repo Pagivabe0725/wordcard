@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PopupService } from '../../../../Shared/Services/popup.service';
 import { Dialog } from '../../../../Shared/Interfaces/dialog';
+import { LocalStorageService } from '../../../../Shared/Services/local-storage.service';
 
 @Component({
   selector: 'app-title',
@@ -32,27 +33,30 @@ export class TitleComponent implements OnInit, OnDestroy {
   constructor(
     private actRoute: ActivatedRoute,
     private collectionService: CollectionService,
-    private popupService: PopupService
+    private popupService: PopupService,
+    private localStorageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
-    this.categorySub = this.actRoute.parent?.params.subscribe((params) => {
-      let collectionSub: Subscription = this.collectionService
-        .getDatasFromCollectionByName('Packs', params['id'], undefined)
-        .subscribe((data) => {
-          if (data) this.allTitleArray = Object.keys(data);
-          console.log(this.allTitleArray);
-          collectionSub.unsubscribe();
-        });
-    });
-    this.inputTitle.addValidators([
-      Validators.required,
-      Validators.minLength(2),
-    ]);
+    let collectionSub: Subscription = this.collectionService
+      .getDatasFromCollectionByName(
+        'Packs',
+        this.localStorageService.getOnePropertyOfObject('user', 'id'),
+        undefined
+      )
+      .subscribe((data) => {
+        if (data) this.allTitleArray = Object.keys(data);
+        this.inputTitle.addValidators([
+          Validators.required,
+          Validators.minLength(2),
+        ]);
 
-    if (this.isChangeableTitle === false) {
-      this.inputTitle.disable();
-    }
+        if (this.isChangeableTitle === false) {
+          this.inputTitle.disable();
+        }
+        console.log('ez is megvan')
+        collectionSub.unsubscribe();
+      });
   }
 
   ngOnDestroy(): void {

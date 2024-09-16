@@ -14,6 +14,10 @@ export class LocalStorageService {
     return JSON.parse(localStorage.getItem(key) as string);
   }
 
+  getOnePropertyOfObject(key: string, property: string): any {
+    return JSON.parse(localStorage.getItem(key) as string)[property];
+  }
+
   removeObjectFromLocalStorage(key: string): void {
     localStorage.removeItem(key);
   }

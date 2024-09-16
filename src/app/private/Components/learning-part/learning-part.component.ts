@@ -14,6 +14,7 @@ import { PopupService } from '../../../Shared/Services/popup.service';
 import { Dialog } from '../../../Shared/Interfaces/dialog';
 import { RouterService } from '../../../Shared/Services/router.service';
 import { GetCardsService } from '../../Services/get-cards.service';
+import { LocalStorageService } from '../../../Shared/Services/local-storage.service';
 
 @Component({
   selector: 'app-learning-part',
@@ -44,18 +45,18 @@ export class LearningPartComponent implements OnInit, OnDestroy {
   private collSub?: Subscription;
   public loading: boolean = true;
   constructor(
-    private collectionService: CollectionService,
     private actRoute: ActivatedRoute,
     private popupService: PopupService,
     private routerService: RouterService,
-    private get_cardsService: GetCardsService
+    private get_cardsService: GetCardsService,
+    private localStorageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
-    this.userSub = this.actRoute.parent!.params.subscribe((params) => {
-      this.actualUser = params['id'];
-    });
-
+    this.actualUser = this.localStorageService.getOnePropertyOfObject(
+      'user',
+      'id'
+    );
     this.packSub = this.actRoute.params.subscribe((params) => {
       if ((params['array'] as string).includes(',')) {
         this.categoryArray = (params['array'] as string).split(',');

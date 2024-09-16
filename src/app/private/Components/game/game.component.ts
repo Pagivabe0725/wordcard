@@ -26,7 +26,7 @@ import { PopupService } from '../../../Shared/Services/popup.service';
 })
 export class GameComponent implements OnInit, OnDestroy {
   private timeIntervall!: any;
-  public loadedCardArray:boolean=false;
+  public loadedCardArray: boolean = false;
   private cardSub!: Subscription;
   public loading: boolean = true;
   public cardArray: Array<WordCard> = [];
@@ -84,8 +84,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.cardSub = this.get_cardService
       .GetCards(
         'all',
-        (this.localStorageService.chosenObjectFromLocalStorage('user') as User)
-          .id
+        this.localStorageService.getOnePropertyOfObject('user', 'id')
       )
       .subscribe((data) => {
         console.log(data);
@@ -93,11 +92,12 @@ export class GameComponent implements OnInit, OnDestroy {
         this.copiedCardArray = [...this.cardArray];
       });
     setTimeout(() => {
-      if(this.cardArray.length>=20){
-      this.startSettings();
-      this.loadedCardArray=true;
+      if (this.cardArray.length >= 20) {
+        this.startSettings();
+        this.loadedCardArray = true;
+      } else {
+        this.loading = false;
       }
-      else{this.loading=false}
     }, 3000);
   }
 

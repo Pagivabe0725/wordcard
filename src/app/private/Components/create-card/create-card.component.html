@@ -20,5 +20,9 @@ $index) {
 ></app-input-element>
 } }@else {
 
-<app-title [inputTitle]="title" (saveEvent)="save($event)" [isChangeableTitle]="isChangeableTitle"></app-title>
+<app-title
+  [inputTitle]="title"
+  (saveEvent)="save($event)"
+  [isChangeableTitle]="isChangeableTitle"
+></app-title>
 }

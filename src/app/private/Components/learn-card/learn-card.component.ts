@@ -9,7 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { OrderServiceService } from '../../../Shared/Services/order-service.service';
 import { RouterService } from '../../../Shared/Services/router.service';
-
+import { LocalStorageService } from '../../../Shared/Services/local-storage.service';
 
 @Component({
   selector: 'app-learn-card',
@@ -25,13 +25,11 @@ import { RouterService } from '../../../Shared/Services/router.service';
 })
 export class LearnCardComponent implements OnInit, OnDestroy {
   public packArray: Array<finalPack> = [];
-  private actrouteSub?: Subscription;
   public actualUser?: string;
   public loading: boolean = true;
   public moreOption: boolean = false;
   public activeOptinsArray: Array<string> = [];
   private packSub?: Subscription;
-
   private orderType?: 'string' | 'Timestamp' = 'string';
   private orderDirection: 'increase' | 'decrease' = 'increase';
 
@@ -40,32 +38,31 @@ export class LearnCardComponent implements OnInit, OnDestroy {
     private actRoute: ActivatedRoute,
     private orderService: OrderServiceService,
     private routerService: RouterService,
+    private localStroageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
-    
-    this.actRoute.parent?.params.subscribe((params) => {
-      this.actualUser = params['id'];
-      this.packSub = this.collectionService
-        .getDatasFromCollectionByName('Packs', this.actualUser, undefined)
-        .subscribe((data: any) => {
-          if (data) {
-            this.packArray = [];
-            let dataKeyArray: Array<string> = Object.keys(data);
-            for (let key of dataKeyArray) {
-              this.packArray?.push(data[key] as finalPack);
-            }
+    console.log('henlo')
+    this.actualUser = this.localStroageService.getOnePropertyOfObject(
+      'user',
+      'id'
+    );
+    this.packSub = this.collectionService
+      .getDatasFromCollectionByName('Packs', this.actualUser, undefined)
+      .subscribe((data: any) => {
+        if (data) {
+          this.packArray = [];
+          let dataKeyArray: Array<string> = Object.keys(data);
+          for (let key of dataKeyArray) {
+            this.packArray?.push(data[key] as finalPack);
           }
-          
-          this.orderFunction();
-          
-          this.loading = false;
-        });
-    });
+        }
+        this.orderFunction();
+        this.loading = false;
+      });
   }
 
   ngOnDestroy(): void {
-    this.actrouteSub?.unsubscribe();
     this.packSub?.unsubscribe();
   }
 
